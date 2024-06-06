@@ -14,8 +14,10 @@ import com.hearout.app.HearOut
 import com.hearout.app.R
 import com.hearout.app.data.model.TTS
 import com.hearout.app.domain.OnAction
+import com.hearout.app.domain.TtsType
 import com.hearout.app.view.screens.MainScreenState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Locale
 
 class TTSViewModel : ViewModel() {
 
@@ -30,12 +33,12 @@ class TTSViewModel : ViewModel() {
 
 
     private val _mainState = MutableStateFlow(MainScreenState())
-    val mainState: StateFlow<MainScreenState> = _mainState.asStateFlow()
+    val mainState: StateFlow<MainScreenState> get() = _mainState.asStateFlow()
 
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            tts.setLanguage("en", "In")
+            tts.setLanguage("en", Locale.getDefault().country)
         }
     }
 
@@ -57,11 +60,11 @@ class TTSViewModel : ViewModel() {
             is OnAction.SelectedLanguage -> selectedLanguage(onAction.language)
             OnAction.Stop -> stop()
             is OnAction.SelectedCode -> selectedCode(onAction.languageCode, onAction.countryCode)
-            is OnAction.IsSpeaking -> isSpeaking(onAction.speaking)
+            is OnAction.IsSpeaking -> isSpeaking(onAction.ttsType,onAction.speaking)
             is OnAction.SelectedVoice -> selectedVoice(onAction.name)
             is OnAction.VoiceName -> voiceName(onAction.name)
             is OnAction.ChangeText2 -> changeText2(onAction.text)
-            is OnAction.IsSpeaking2 -> isSpeaking2(onAction.speaking)
+            is OnAction.IsSpeaking2 -> isSpeaking(onAction.ttsType,onAction.speaking)
             is OnAction.OnGetVoices2 -> onGetVoices2(onAction.languageCode, onAction.countryCode)
             is OnAction.SelectedCode2 -> selectedCode2(onAction.languageCode, onAction.countryCode)
             is OnAction.SelectedLanguage2 -> selectedLanguage2(onAction.language)
@@ -147,8 +150,10 @@ class TTSViewModel : ViewModel() {
 
 
         // Call the TTS method to speak out the text
-        tts.speakOut(text, languageCode, countryCode, voiceName)
-
+        viewModelScope.launch {
+                delay(200L)
+                    tts.speakOut(text, languageCode, countryCode, voiceName)
+        }
     }
 
     private fun setLanguage2(languageCode: String, countryCode: String) {
@@ -196,31 +201,31 @@ class TTSViewModel : ViewModel() {
 
 
 
-    private fun isSpeaking2(speaking: Boolean) {
-        if (speaking) {
-            viewModelScope.launch(Dispatchers.IO) {
-                delay(50L)
-                repeat(25) { // Check 25 times with a delay
-                   val  isTtsSpeaking = tts.isSpeaking()
-                    delay(50L) // Short delay between checks
-                    if (isTtsSpeaking){
-                        _mainState.value = _mainState.value.copy(
-                            isSpeaking2 = isTtsSpeaking,
-                            isSpeaking = false,
-                        )
-                    }
-                }
-            }
-            return
-        }
-        if (!speaking) {
-            _mainState.value = _mainState.value.copy(
-                isSpeaking2 = false,
-                isSpeaking = false,
-            )
-        }
-
-    }
+//    private fun isSpeaking2(speaking: Boolean) {
+//        if (speaking) {
+//            viewModelScope.launch {
+//                delay(100L)
+//                repeat(15) { // Check 15 times with a delay
+//                    delay(100L) // Short delay between checks
+//                    val isTtsSpeaking = tts.isSpeaking2()
+//                    if (isTtsSpeaking) {
+//                        _mainState.value = _mainState.value.copy(
+//                            isSpeaking2 = true,
+//                            isSpeaking = false
+//                        )
+//                    }
+//                }
+//            }
+//            return
+//        }
+//        if (!speaking) {
+//            _mainState.value = _mainState.value.copy(
+//                isSpeaking2 = false,
+//                isSpeaking = false,
+//            )
+//        }
+//
+//    }
 
 
     private fun changeText2(text: String) {
@@ -235,7 +240,10 @@ class TTSViewModel : ViewModel() {
         voiceName: String
     ) {
         // Call the TTS method to speak out the text
-        tts.speakOut(text, languageCode, countryCode, voiceName)
+        viewModelScope.launch {
+            delay(200L)
+            tts.speakOut(text, languageCode, countryCode, voiceName)
+        }
     }
 
     private fun onGetVoices(languageCode: String, countryCode: String) {
@@ -278,6 +286,7 @@ class TTSViewModel : ViewModel() {
 
     override fun onCleared() {
         _mainState.value = _mainState.value
+        tts.shutDown()
         super.onCleared()
     }
 
@@ -338,31 +347,130 @@ class TTSViewModel : ViewModel() {
         _mainState.value = _mainState.value.copy(mp3File = file.absoluteFile)
     }
 
-    private fun isSpeaking(speaking: Boolean) {
+//    private fun isSpeaking(speaking: Boolean) {
+//        if (speaking) {
+//            viewModelScope.launch {
+//                delay(100L)
+//                repeat(15) { // Check 15 times with a delay)
+//                    delay(100L) // Short delay between checks
+//                    val ttsSpeaking = tts.isSpeaking()
+//                    if (ttsSpeaking) {
+//                        _mainState.value = _mainState.value.copy(
+//                            isSpeaking2 = false,
+//                            isSpeaking = true
+//                        )
+//                    }
+//
+//                }
+//            }
+//            return
+//        }
+//        if (!speaking) {
+//            _mainState.value = _mainState.value.copy(
+//                isSpeaking = false,
+//                isSpeaking2 = false,
+//            )
+//        }
+//
+//    }
+
+    private var currentJob: Job? = null
+//    private fun isSpeaking(ttsType: TtsType, speaking: Boolean) {
+//        currentJob?.cancel()
+//
+//        if (speaking) {
+//            currentJob = viewModelScope.launch(Dispatchers.IO) {
+//                delay(100L)
+//                repeat(5000) { // Check 15 times with a delay
+//                    delay(80L) // Short delay between checks
+//                    val ttsSpeaking = tts.isSpeaking()
+//                        _mainState.value = when (ttsType) {
+//                            TtsType.TTS1 -> _mainState.value.copy(
+//                                isSpeaking = ttsSpeaking,
+//                                isSpeaking2 = false
+//                            )
+//                            TtsType.TTS2 -> _mainState.value.copy(
+//                                isSpeaking = false,
+//                                isSpeaking2 = ttsSpeaking
+//                            )
+//                        }
+//
+//
+//                }
+//            }
+//            return
+//        }
+//        if (!speaking) {
+//            _mainState.value = _mainState.value.copy(
+//                isSpeaking = false,
+//                isSpeaking2 = false,
+//            )
+//        }
+//        return
+//    }
+
+    private fun isSpeaking(ttsType: TtsType, speaking: Boolean) {
+        // Cancel any ongoing job
+        currentJob?.cancel()
+
         if (speaking) {
-            viewModelScope.launch(Dispatchers.IO) {
-                delay(50L)
-                repeat(25) { // Check 25 times with a delay)
-                    delay(50L) // Short delay between checks
+            currentJob = viewModelScope.launch {
+                delay(100L)
+                var consecutiveFalseCount = 0
+                val maxConsecutiveFalseCount = 25 // Adjust as needed
+                val maxRepeats = 5000 // Adjust repeat count as needed
+
+                repeat(maxRepeats) {
+                    delay(80L) // Short delay between checks
                     val ttsSpeaking = tts.isSpeaking()
-                    if(ttsSpeaking) {
-                        _mainState.value = _mainState.value.copy(
-                            isSpeaking = ttsSpeaking ,
-                            isSpeaking2 = false,
+
+                    _mainState.value = when (ttsType) {
+                        TtsType.TTS1 -> _mainState.value.copy(
+                            isSpeaking = ttsSpeaking,
+                            isSpeaking2 = false
+                        )
+                        TtsType.TTS2 -> _mainState.value.copy(
+                            isSpeaking = false,
+                            isSpeaking2 = ttsSpeaking
                         )
                     }
+
+                    if (ttsSpeaking) {
+                        // Reset consecutive false count if TTS is speaking
+                        consecutiveFalseCount = 0
+                    } else {
+                        // Increment consecutive false count if TTS is not speaking
+                        consecutiveFalseCount++
+                    }
+
+                    // Break the loop if TTS has not spoken for too many consecutive times
+                    if (consecutiveFalseCount >= maxConsecutiveFalseCount) {
+                        return@launch
+                    }
+                }
+
+                // Update UI one last time after the loop
+                _mainState.value = when (ttsType) {
+                    TtsType.TTS1 -> _mainState.value.copy(
+                        isSpeaking = false,
+                        isSpeaking2 = false
+                    )
+                    TtsType.TTS2 -> _mainState.value.copy(
+                        isSpeaking = false,
+                        isSpeaking2 = false
+                    )
                 }
             }
-            return
-        }
-        if (!speaking) {
+        } else {
             _mainState.value = _mainState.value.copy(
                 isSpeaking = false,
-                isSpeaking2 = false,
+                isSpeaking2 = false
             )
         }
-
     }
+
+
+
 
     private fun selectedCode(languagecode: String, countryCode: String) {
         _mainState.value =

@@ -86,9 +86,18 @@ class TTS(
              return _tts!!.isSpeaking
 
     }
+//    fun isSpeaking2(): Boolean {
+//        Log.e("TTS", "isSpeaking: ${_tts!!.isSpeaking}")
+//             return _tts!!.isSpeaking
+//
+//    }
 
     // Function to stop TTS
     fun stop() {
         _tts?.stop()
+    }
+
+    fun shutDown() {
+        _tts?.shutdown()
     }
 }

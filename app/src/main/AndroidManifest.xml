@@ -20,7 +20,8 @@
 
 <!--        <meta-data-->
 <!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
-<!--            android:value="ca-app-pub-4376590123999291~8315241116" />-->
+<!--            android:value="ca-app-pub-4376590123999291~8316" />-->
+
 
         <activity
             android:name=".view.MainActivity"
@@ -36,5 +37,10 @@
             </intent-filter>
         </activity>
     </application>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
 
 </manifest>

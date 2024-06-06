@@ -21,6 +21,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,6 +57,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hearout.app.R
 import com.hearout.app.domain.OnAction
+import com.hearout.app.domain.TtsType
 import com.hearout.app.view.components.SingleDropDownMenu
 import com.hearout.app.view.components.SingleDropDownMenu2
 import com.hearout.app.view.components.ssp
@@ -63,6 +67,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Locale
 
 
 data class MainScreenState(
@@ -92,7 +97,7 @@ data class MainScreenState(
 
 @Composable
 fun MainScreenImpl(viewModel: TTSViewModel = viewModel()) {
-    val mainState = viewModel.mainState.collectAsStateWithLifecycle()
+    val mainState = viewModel.mainState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current)
     MainScreen(mainState, viewModel::onActionTTS)
 }
 
@@ -192,8 +197,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
             LaunchedEffect(Unit) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    onActionTTS(OnAction.OnGetVoices("en", "IN"))
-                    onActionTTS(OnAction.OnGetVoices2("hi", "IN"))
+                    onActionTTS(OnAction.OnGetVoices("en", Locale.getDefault().country))
+                    onActionTTS(OnAction.OnGetVoices2("hi", Locale.getDefault().country))
                 }
             }
 
@@ -304,24 +309,37 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             mainState.value.voiceName
                                         )
                                     )
-                                    onActionTTS(OnAction.IsSpeaking(true))
+                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1,true))
                                 } else {
                                     onActionTTS(OnAction.Stop)
                                     loading.value = false
-                                    onActionTTS(OnAction.IsSpeaking(false))
+                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1,false))
                                 }
                             }, modifier = Modifier
                                 .weight(1f)
+                                .height(50.dp)
                                 .padding(end = 5.dp)
                         ) {
-                            Text(
-                                if (mainState.value.isSpeaking) "Reset" else "Speak",
-                                fontSize = 12.ssp,
-                                fontFamily = FontFamily.Serif
-                            )
-                            AnimatedVisibility(visible = loading.value) {
-                                CircularProgressIndicator(color = MaterialTheme.colorScheme.inverseOnSurface,
-                                    modifier = Modifier.size(20.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly) {
+                                Text(
+                                    if (mainState.value.isSpeaking) "Stop" else "Speak",
+                                    fontSize = 12.ssp,
+                                    fontFamily = FontFamily.Serif
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                Icon(
+                                    imageVector = if (mainState.value.isSpeaking)  Icons.Default.Stop else Icons.Default.PlayArrow  ,
+                                    contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak")
+
+                                AnimatedVisibility(visible = loading.value) {
+                                    CircularProgressIndicator(
+                                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .padding(start = 8.dp)
+                                    )
+                                }
                             }
                         }
 
@@ -337,15 +355,23 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                             }, modifier = Modifier
                                 .weight(1f)
+                                .height(50.dp)
                                 .imePadding()
                                 .padding(start = 5.dp)
 
                         ) {
-                            Text(
-                                "Save as MP3",
-                                fontSize = 12.ssp,
-                                fontFamily = FontFamily.Serif
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    "Save as MP3",
+                                    fontSize = 12.ssp,
+                                    fontFamily = FontFamily.Serif
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                            }
                         }
                     }
                 }
@@ -490,6 +516,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     Toast.makeText(context, "Enter text", Toast.LENGTH_SHORT).show()
                                     return@Button
                                 }
+                                if (!Utils.isNetworkAvailable(context = context)) {
+                                    Toast.makeText(context, "Need Internet Connection", Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
                                 if (!mainState.value.isSpeaking2 && !loading2.value) {
                                     loading2.value = true
                                     onActionTTS(
@@ -500,25 +530,38 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             mainState.value.voiceName2
                                         )
                                     )
-                                    onActionTTS(OnAction.IsSpeaking2(true))
+                                    onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, true))
 
                                 } else {
                                     onActionTTS(OnAction.Stop2)
                                     loading2.value = false
-                                    onActionTTS(OnAction.IsSpeaking2(false))
+                                    onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2,false))
                                 }
                             }, modifier = Modifier
                                 .weight(1f)
+                                .height(50.dp)
                                 .padding(end = 5.dp)
                         ) {
-                            Text(
-                                if (mainState.value.isSpeaking2) "Reset" else "Speak",
-                                fontSize = 12.ssp,
-                                fontFamily = FontFamily.Serif
-                            )
-                            AnimatedVisibility(loading2.value) {
-                                CircularProgressIndicator(color = MaterialTheme.colorScheme.inverseOnSurface,
-                                    modifier = Modifier.size(20.dp) )
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly) {
+                                Text(
+                                    if (mainState.value.isSpeaking2) "Stop" else "Speak",
+                                    fontSize = 12.ssp,
+                                    fontFamily = FontFamily.Serif
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                Icon(imageVector = if (mainState.value.isSpeaking2)  Icons.Default.Stop else Icons.Default.PlayArrow  ,
+                                    contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak")
+
+                                AnimatedVisibility(loading2.value) {
+                                    CircularProgressIndicator(
+                                        color = MaterialTheme.colorScheme.inverseOnSurface,
+                                        modifier = Modifier
+                                            .size(30.dp)
+                                            .padding(start = 8.dp)
+                                    )
+
+                                }
                             }
                         }
 
@@ -534,14 +577,22 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                             }, modifier = Modifier
                                 .weight(1f)
+                                .height(50.dp)
                                 .padding(start = 5.dp)
 
                         ) {
-                            Text(
-                                "Save as MP3",
-                                fontSize = 12.ssp,
-                                fontFamily = FontFamily.Serif
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Text(
+                                    "Save as MP3",
+                                    fontSize = 12.ssp,
+                                    fontFamily = FontFamily.Serif
+                                )
+                                Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                            }
                         }
                     }
                 }
