@@ -45,7 +45,7 @@ class TTSViewModel : ViewModel() {
             is OnAction.ChangeName -> changeName(onAction.name)
             is OnAction.ChangeText -> changeText(onAction.text)
             is OnAction.OnGetVoices -> onGetVoices(onAction.languageCode, onAction.countryCode)
-            is OnAction.SaveAsMp3 -> saveAsMp3(onAction.text, onAction.fileName)
+            is OnAction.SaveAsMp3 -> saveAsMp3(onAction.text, onAction.fileName,onAction.selectedLanguage)
             is OnAction.SetLanguage -> setLanguage(onAction.languageCode, onAction.countryCode)
             is OnAction.SpeakText -> speakText(
                 onAction.text,
@@ -86,10 +86,13 @@ class TTSViewModel : ViewModel() {
 
             OnAction.CloseDialog2 -> closeDialog2()
             OnAction.OpenDialog2 -> openDialog2()
-
+            is OnAction.ChangeName2 -> changeName2(onAction.name)
         }
     }
 
+    private fun changeName2(name: String) {
+        _mainState.value = _mainState.value.copy(name2 = name)
+    }
 
 
     private fun convertLanguage(text: String, code1: String, code2: String) {
@@ -196,11 +199,11 @@ class TTSViewModel : ViewModel() {
     private fun isSpeaking2(speaking: Boolean) {
         if (speaking) {
             viewModelScope.launch(Dispatchers.IO) {
-                delay(500L)
+                delay(50L)
                 var isTtsSpeaking: Boolean = false
-                repeat(20) { // Check 5 times with a delay
+                repeat(25) { // Check 25 times with a delay
                     isTtsSpeaking = tts.isSpeaking()
-                    delay(100L) // Short delay between checks
+                    delay(50L) // Short delay between checks
                     if (isTtsSpeaking){
                         _mainState.value = _mainState.value.copy(
                             isSpeaking2 = isTtsSpeaking,
@@ -293,10 +296,10 @@ class TTSViewModel : ViewModel() {
         _mainState.value = _mainState.value.copy(selectedVoice = name)
     }
 
-    private fun saveAsMp3(text: String, fileName: String) {
+    private fun saveAsMp3(text: String, fileName: String, selectedLanguage: String) {
         val folderName = HearOut.hearOut!!.getString(R.string.app_name)
         val folderPath =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath + File.separator + folderName
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath + File.separator + folderName + File.separator + selectedLanguage
         val folder = File(folderPath)
 
         if (!folder.exists()) {
@@ -339,11 +342,14 @@ class TTSViewModel : ViewModel() {
     private fun isSpeaking(speaking: Boolean) {
         if (speaking) {
             viewModelScope.launch(Dispatchers.IO) {
-                delay(500L)
-                _mainState.value = _mainState.value.copy(
-                    isSpeaking = tts.isSpeaking(),
-                    isSpeaking2 = false,
-                )
+                delay(50L)
+                repeat(25) { // Check 25 times with a delay)
+                    delay(50L) // Short delay between checks
+                    _mainState.value = _mainState.value.copy(
+                        isSpeaking = tts.isSpeaking(),
+                        isSpeaking2 = false,
+                    )
+                }
             }
             return
         }

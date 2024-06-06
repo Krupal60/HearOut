@@ -69,6 +69,7 @@ data class MainScreenState(
     val text: String = "",
     val text2: String = "",
     val name: String = "",
+    val name2: String = "",
     val isSpeaking: Boolean = false,
     val isSpeaking2: Boolean = false,
     val selectedLanguage: String = "English",
@@ -592,7 +593,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         onActionTTS(
                                             OnAction.SaveAsMp3(
                                                 mainState.value.text,
-                                                mainState.value.name + "_${mainState.value.selectedLanguage}"
+                                                mainState.value.name ,
+                                                mainState.value.selectedLanguage
                                             )
                                         )
                                         //                        showInterstitial(context) {
@@ -644,7 +646,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             onActionTTS(
                                                 OnAction.SaveAsMp3(
                                                     mainState.value.text,
-                                                    mainState.value.name + "_${mainState.value.selectedLanguage}"
+                                                    mainState.value.name,
+                                                    mainState.value.selectedLanguage
                                                 )
                                             )
                                             onActionTTS(OnAction.CloseDialog)
@@ -693,9 +696,9 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
 
                             OutlinedTextField(
-                                value = mainState.value.name,
+                                value = mainState.value.name2,
                                 onValueChange = { string ->
-                                    onActionTTS(OnAction.ChangeName(string))
+                                    onActionTTS(OnAction.ChangeName2(string))
                                 },
                                 placeholder = {
                                     Text(
@@ -708,16 +711,17 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                 keyboardActions = KeyboardActions(onDone = {
                                     focus.clearFocus()
-                                    if (mainState.value.text.isEmpty() || mainState.value.text.isBlank()) {
+                                    if (mainState.value.text2.isEmpty() || mainState.value.text2.isBlank()) {
                                         Toast.makeText(context, "Enter text", Toast.LENGTH_SHORT)
                                             .show()
                                         return@KeyboardActions
                                     }
-                                    if (mainState.value.name.isNotEmpty() || mainState.value.name.isNotBlank()) {
+                                    if (mainState.value.name2.isNotEmpty() || mainState.value.name2.isNotBlank()) {
                                         onActionTTS(
                                             OnAction.SaveAsMp3(
-                                                mainState.value.text,
-                                                mainState.value.name + "_${mainState.value.selectedLanguage2}"
+                                                mainState.value.text2,
+                                                mainState.value.name2 ,
+                                                mainState.value.selectedLanguage2
                                             )
                                         )
                                         onActionTTS(OnAction.CloseDialog2)
@@ -757,11 +761,12 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     onClick = {
 
 
-                                        if (mainState.value.name.isNotEmpty() || mainState.value.name.isNotBlank()) {
+                                        if (mainState.value.name2.isNotEmpty() || mainState.value.name2.isNotBlank()) {
                                             onActionTTS(
                                                 OnAction.SaveAsMp3(
                                                     mainState.value.text2,
-                                                    mainState.value.name + "_${mainState.value.selectedLanguage2}"
+                                                    mainState.value.name2 ,
+                                                            mainState.value.selectedLanguage2
                                                 )
 
                                             )

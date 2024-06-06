@@ -17,12 +17,13 @@ sealed class OnAction {
     ) : OnAction()
 
     data class SaveAsMp3(
-        val text: String, val fileName: String
+        val text: String, val fileName: String, val selectedLanguage: String
     ) : OnAction()
 
     data object Stop : OnAction()
     data object Stop2 : OnAction()
     data class ChangeName(val name: String) : OnAction()
+    data class ChangeName2(val name: String) : OnAction()
     data class ChangeText(val text: String) : OnAction()
     data class ChangeText2(val text: String) : OnAction()
     data class IsSpeaking(val speaking: Boolean) : OnAction()
