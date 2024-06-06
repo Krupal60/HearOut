@@ -200,9 +200,8 @@ class TTSViewModel : ViewModel() {
         if (speaking) {
             viewModelScope.launch(Dispatchers.IO) {
                 delay(50L)
-                var isTtsSpeaking: Boolean = false
                 repeat(25) { // Check 25 times with a delay
-                    isTtsSpeaking = tts.isSpeaking()
+                   val  isTtsSpeaking = tts.isSpeaking()
                     delay(50L) // Short delay between checks
                     if (isTtsSpeaking){
                         _mainState.value = _mainState.value.copy(
@@ -345,10 +344,13 @@ class TTSViewModel : ViewModel() {
                 delay(50L)
                 repeat(25) { // Check 25 times with a delay)
                     delay(50L) // Short delay between checks
-                    _mainState.value = _mainState.value.copy(
-                        isSpeaking = tts.isSpeaking(),
-                        isSpeaking2 = false,
-                    )
+                    val ttsSpeaking = tts.isSpeaking()
+                    if(ttsSpeaking) {
+                        _mainState.value = _mainState.value.copy(
+                            isSpeaking = ttsSpeaking ,
+                            isSpeaking2 = false,
+                        )
+                    }
                 }
             }
             return

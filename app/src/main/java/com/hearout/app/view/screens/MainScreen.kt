@@ -320,7 +320,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 fontFamily = FontFamily.Serif
                             )
                             AnimatedVisibility(visible = loading.value) {
-                                CircularProgressIndicator(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.inverseOnSurface,
+                                    modifier = Modifier.size(20.dp))
                             }
                         }
 
@@ -516,7 +517,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 fontFamily = FontFamily.Serif
                             )
                             AnimatedVisibility(loading2.value) {
-                                CircularProgressIndicator(color = MaterialTheme.colorScheme.inverseOnSurface)
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.inverseOnSurface,
+                                    modifier = Modifier.size(20.dp) )
                             }
                         }
 
@@ -839,7 +841,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 //fun loadInterstitial(context: Context) {
 //    if (mInterstitialAd == null) {
 //        InterstitialAd.load(context,
-//            "ca-app-pub-4376590123999291/6874236744",
 //            AdRequest.Builder().build(),
 //            object : InterstitialAdLoadCallback() {
 //                override fun onAdFailedToLoad(adError: LoadAdError) {
