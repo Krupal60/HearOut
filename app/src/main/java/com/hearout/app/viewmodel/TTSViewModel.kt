@@ -319,30 +319,40 @@ class TTSViewModel : ViewModel() {
         val params = HashMap<String, String>()
         val utteranceId = "utteranceId"
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val fileOutputStream = FileOutputStream(file)
-            val parcelFileDescriptor = ParcelFileDescriptor.dup(fileOutputStream.fd)
-            val availableVoices = tts.tts.voices
-            val selectedVoice = availableVoices.find { it.name == _mainState.value.selectedVoice }
-            if (selectedVoice != null) {
-                tts.tts.voice = selectedVoice  // Set the selected voice
-            } else {
-                Log.w("TTS", "Voice with name '${_mainState.value.selectedVoice}' not found")
+            try {
+                val fileOutputStream = FileOutputStream(file)
+                val parcelFileDescriptor = ParcelFileDescriptor.dup(fileOutputStream.fd)
+                val availableVoices = tts.tts.voices
+                val selectedVoice =
+                    availableVoices.find { it.name == _mainState.value.selectedVoice }
+                if (selectedVoice != null) {
+                    tts.tts.voice = selectedVoice  // Set the selected voice
+                } else {
+                    Log.w("TTS", "Voice with name '${_mainState.value.selectedVoice}' not found")
+                }
+                tts.tts.synthesizeToFile(
+                    text, bundle, parcelFileDescriptor, utteranceId
+                )
+            }catch (e:Exception){
+               e.printStackTrace()
             }
-            tts.tts.synthesizeToFile(
-                text, bundle, parcelFileDescriptor, utteranceId
-            )
         } else {
-            val availableVoices = tts.tts.voices
-            val selectedVoice = availableVoices.find { it.name == _mainState.value.selectedVoice }
-            if (selectedVoice != null) {
-                tts.tts.voice = selectedVoice  // Set the selected voice
-            } else {
-                Log.w("TTS", "Voice with name '${_mainState.value.selectedVoice}' not found")
+            try {
+                val availableVoices = tts.tts.voices
+                val selectedVoice =
+                    availableVoices.find { it.name == _mainState.value.selectedVoice }
+                if (selectedVoice != null) {
+                    tts.tts.voice = selectedVoice  // Set the selected voice
+                } else {
+                    Log.w("TTS", "Voice with name '${_mainState.value.selectedVoice}' not found")
+                }
+                params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = utteranceId
+                @Suppress("DEPRECATION") tts.tts.synthesizeToFile(
+                    text, params, file.absolutePath
+                )
+            }catch (e:Exception){
+                e.printStackTrace()
             }
-            params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = utteranceId
-            @Suppress("DEPRECATION") tts.tts.synthesizeToFile(
-                text, params, file.absolutePath
-            )
         }
         _mainState.value = _mainState.value.copy(mp3File = file.absoluteFile)
     }

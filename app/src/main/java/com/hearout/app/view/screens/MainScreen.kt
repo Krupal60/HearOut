@@ -363,10 +363,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+                                horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    "Save as MP3",
+                                    "Save .mp3",
                                     fontSize = 12.ssp,
                                     fontFamily = FontFamily.Serif
                                 )
@@ -588,7 +588,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 horizontalArrangement = Arrangement.SpaceEvenly
                             ) {
                                 Text(
-                                    "Save as MP3",
+                                    "Save .mp3",
                                     fontSize = 12.ssp,
                                     fontFamily = FontFamily.Serif
                                 )
@@ -722,11 +722,18 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         .weight(1f)
 
                                 ) {
-                                    Text(
-                                        "Save as MP3",
-                                        fontSize = 13.ssp,
-                                        fontFamily = FontFamily.Serif
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Text(
+                                            "Save .mp3",
+                                            fontSize = 12.ssp,
+                                            fontFamily = FontFamily.Serif
+                                        )
+                                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                        Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                                    }
                                 }
                             }
                         }
@@ -843,12 +850,18 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
 
                                 ) {
-                                    Text(
-                                        "Save as MP3",
-                                        fontSize = 13.ssp,
-                                        fontFamily = FontFamily.Serif,
-
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Text(
+                                            "Save .mp3",
+                                            fontSize = 12.ssp,
+                                            fontFamily = FontFamily.Serif
                                         )
+                                        Spacer(modifier = Modifier.padding(horizontal = 5.dp))
+                                        Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                                    }
                                 }
 
                             }
