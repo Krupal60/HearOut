@@ -332,11 +332,12 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     imageVector = if (mainState.value.isSpeaking)  Icons.Default.Stop else Icons.Default.PlayArrow  ,
                                     contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak")
 
-                                AnimatedVisibility(visible = loading.value) {
+                                AnimatedVisibility(visible = loading.value, modifier = Modifier.wrapContentHeight()) {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.inverseOnSurface,
                                         modifier = Modifier
-                                            .size(30.dp)
+                                            .size(32.dp)
+                                            .wrapContentHeight()
                                             .padding(start = 8.dp)
                                     )
                                 }
@@ -362,7 +363,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceEvenly
+                                horizontalArrangement = Arrangement.Absolute.SpaceEvenly
                             ) {
                                 Text(
                                     "Save as MP3",
@@ -553,11 +554,12 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 Icon(imageVector = if (mainState.value.isSpeaking2)  Icons.Default.Stop else Icons.Default.PlayArrow  ,
                                     contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak")
 
-                                AnimatedVisibility(loading2.value) {
+                                AnimatedVisibility(loading2.value, modifier = Modifier.wrapContentHeight()) {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.inverseOnSurface,
                                         modifier = Modifier
-                                            .size(30.dp)
+                                            .size(32.dp)
+                                            .wrapContentHeight()
                                             .padding(start = 8.dp)
                                     )
 
