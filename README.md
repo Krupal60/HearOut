@@ -5,6 +5,8 @@
 ![image](https://github.com/Krupal60/HearOut/assets/108316639/ed5766bc-23c3-40f3-95aa-b1a13996a3bb)
 ![image](https://github.com/Krupal60/HearOut/assets/108316639/7b416d13-5331-4cec-bc5b-c621fa0cb907)
 
+https://play.google.com/store/apps/details?id=com.hearout.app
+
 HearOut is a versatile and powerful text-to-speech application designed to cater to the diverse needs of users seeking an efficient and accessible way to consume written content through audio. With HearOut, the process of converting written text into spoken words becomes effortless and seamless, offering a convenient solution for individuals who are on the move, multitasking, or prefer auditory learning
 
 User-Centric Approach:
