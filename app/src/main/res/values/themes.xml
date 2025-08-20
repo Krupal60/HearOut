@@ -2,10 +2,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.HearOut" parent="android:Theme.Material.Light.NoActionBar" >
-
+            <item name="android:statusBarColor">@android:color/transparent</item>
+            <item name="android:enforceNavigationBarContrast" tools:ignore="NewApi">false</item>
+            <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
     <style name="Theme.HearOut.Starting" parent="android:Theme.Material.Light.NoActionBar" >
-        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">#FFFBFDFF</item>
+        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">@color/bg</item>
         <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">@mipmap/ic_launcher</item>
         <item name="android:windowSplashScreenAnimationDuration" tools:ignore="NewApi">200</item>
         <item name="postSplashScreenTheme">@style/Theme.HearOut</item>

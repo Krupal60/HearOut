@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -97,7 +98,8 @@ data class MainScreenState(
 
 @Composable
 fun MainScreenImpl(viewModel: TTSViewModel = viewModel()) {
-    val mainState = viewModel.mainState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current)
+    val mainState =
+        viewModel.mainState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current)
     MainScreen(mainState, viewModel::onActionTTS)
 }
 
@@ -107,13 +109,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
     val context = LocalContext.current
     val focus = LocalFocusManager.current
-
-
-//    MobileAds.initialize(context)
-//
-//    LaunchedEffect(Unit) {
-//        loadInterstitial(context)
-//    }
 
 
     Scaffold(
@@ -131,49 +126,17 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             lineHeight = 22.ssp
                         )
                     )
-                }, actions = {
-//
-//                    val dropDownData = listOf("Term of Use", "Privacy Policy")
-//
-//                    var expanded by remember { mutableStateOf(false) }
-//
-//                    IconButton(
-//                        onClick = {
-//                            expanded = true
-//                        },
-//                        modifier = Modifier
-//                            .align(Alignment.CenterVertically)
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.MoreVert,
-//                            contentDescription = "more"
-//                        )
-//                    }
-//                    DropdownMenu(
-//                        expanded = expanded,
-//                        onDismissRequest = { expanded = false },
-//                        modifier = Modifier.fillMaxWidth(0.5F)
-//                    ) {
-//                        dropDownData.forEach { name ->
-//                            DropdownMenuItem(text = {
-//                                Text(
-//                                    text = name, fontSize = 12.ssp,
-//                                    fontFamily = FontFamily.Serif
-//                                )
-//                            }, onClick = {
-//                                expanded = false
-//                            })
-//                        }
-//                    }
                 }
             )
-        }
+        },
+        modifier = Modifier.safeDrawingPadding()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(top = it.calculateTopPadding(), start = 14.dp, end = 14.dp, bottom = 10.dp)
+                .padding(it)
+                .padding(start = 14.dp, end = 14.dp, bottom = 10.dp)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
 
@@ -193,8 +156,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 "Spanish" to "es"
             )
 
-
-
             LaunchedEffect(Unit) {
                 CoroutineScope(Dispatchers.Main).launch {
                     onActionTTS(OnAction.OnGetVoices("en", Locale.getDefault().country))
@@ -210,10 +171,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 mutableStateOf(false)
             }
             LaunchedEffect(mainState.value.isSpeaking) {
-                    if (mainState.value.isSpeaking) loading.value = false
+                if (mainState.value.isSpeaking) loading.value = false
             }
             LaunchedEffect(mainState.value.isSpeaking2) {
-                    if (mainState.value.isSpeaking2) loading2.value = false
+                if (mainState.value.isSpeaking2) loading2.value = false
             }
 
 
@@ -227,9 +188,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)
                 ) {
                     Row {
-                        SingleDropDownMenu(modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 5.dp),
+                        SingleDropDownMenu(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 5.dp),
                             data = languages,
                             selected = mainState.value.selectedLanguage,
                             onOptionSelected = { language, languagecode ->
@@ -259,9 +221,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             })
 
 
-                        SingleDropDownMenu2(modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 5.dp),
+                        SingleDropDownMenu2(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 5.dp),
                             data = mainState.value.voiceNameData,
                             selected = mainState.value.selectedVoice,
                             onOptionSelected = { voice, voiceCode ->
@@ -309,19 +272,21 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             mainState.value.voiceName
                                         )
                                     )
-                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1,true))
+                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, true))
                                 } else {
                                     onActionTTS(OnAction.Stop)
                                     loading.value = false
-                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1,false))
+                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, false))
                                 }
                             }, modifier = Modifier
                                 .weight(1f)
                                 .height(50.dp)
                                 .padding(end = 5.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceEvenly) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
                                 Text(
                                     if (mainState.value.isSpeaking) "Stop" else "Speak",
                                     fontSize = 12.ssp,
@@ -329,10 +294,14 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                                 Icon(
-                                    imageVector = if (mainState.value.isSpeaking)  Icons.Default.Stop else Icons.Default.PlayArrow  ,
-                                    contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak")
+                                    imageVector = if (mainState.value.isSpeaking) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak"
+                                )
 
-                                AnimatedVisibility(visible = loading.value, modifier = Modifier.wrapContentHeight()) {
+                                AnimatedVisibility(
+                                    visible = loading.value,
+                                    modifier = Modifier.wrapContentHeight()
+                                ) {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.inverseOnSurface,
                                         modifier = Modifier
@@ -379,28 +348,30 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
             }
 
-            OutlinedButton(modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .align(Alignment.CenterHorizontally)
-                .height(55.dp)
-                .padding(top = 15.dp), onClick = {
+            OutlinedButton(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .align(Alignment.CenterHorizontally)
+                    .height(55.dp)
+                    .padding(top = 15.dp), onClick = {
 
-                if (!Utils.isNetworkAvailable(context = context)) {
-                    Toast.makeText(context, "Need Internet Connection", Toast.LENGTH_SHORT).show()
-                    return@OutlinedButton
-                }
-                if (mainState.value.text.isEmpty() || mainState.value.text.isBlank()) {
-                    Toast.makeText(context, "Enter Text", Toast.LENGTH_SHORT).show()
-                    return@OutlinedButton
-                }
-                onActionTTS(
-                    OnAction.Convert(
-                        mainState.value.text,
-                        mainState.value.languageCode,
-                        mainState.value.languageCode2
+                    if (!Utils.isNetworkAvailable(context = context)) {
+                        Toast.makeText(context, "Need Internet Connection", Toast.LENGTH_SHORT)
+                            .show()
+                        return@OutlinedButton
+                    }
+                    if (mainState.value.text.isEmpty() || mainState.value.text.isBlank()) {
+                        Toast.makeText(context, "Enter Text", Toast.LENGTH_SHORT).show()
+                        return@OutlinedButton
+                    }
+                    onActionTTS(
+                        OnAction.Convert(
+                            mainState.value.text,
+                            mainState.value.languageCode,
+                            mainState.value.languageCode2
+                        )
                     )
-                )
-            }
+                }
             ) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -441,9 +412,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)
                 ) {
                     Row {
-                        SingleDropDownMenu(modifier = Modifier
-                            .weight(1f)
-                            .padding(end = 5.dp),
+                        SingleDropDownMenu(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 5.dp),
                             data = languages,
                             selected = mainState.value.selectedLanguage2,
                             onOptionSelected = { language, languagecode ->
@@ -473,9 +445,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             })
 
 
-                        SingleDropDownMenu2(modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 5.dp),
+                        SingleDropDownMenu2(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 5.dp),
                             data = mainState.value.voiceNameData2,
                             selected = mainState.value.selectedVoice2,
                             onOptionSelected = { voice, voiceCode ->
@@ -518,7 +491,11 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     return@Button
                                 }
                                 if (!Utils.isNetworkAvailable(context = context)) {
-                                    Toast.makeText(context, "Need Internet Connection", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Need Internet Connection",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                     return@Button
                                 }
                                 if (!mainState.value.isSpeaking2 && !loading2.value) {
@@ -536,25 +513,32 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 } else {
                                     onActionTTS(OnAction.Stop2)
                                     loading2.value = false
-                                    onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2,false))
+                                    onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, false))
                                 }
                             }, modifier = Modifier
                                 .weight(1f)
                                 .height(50.dp)
                                 .padding(end = 5.dp)
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceEvenly) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
                                 Text(
                                     if (mainState.value.isSpeaking2) "Stop" else "Speak",
                                     fontSize = 12.ssp,
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                Icon(imageVector = if (mainState.value.isSpeaking2)  Icons.Default.Stop else Icons.Default.PlayArrow  ,
-                                    contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak")
+                                Icon(
+                                    imageVector = if (mainState.value.isSpeaking2) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak"
+                                )
 
-                                AnimatedVisibility(loading2.value, modifier = Modifier.wrapContentHeight()) {
+                                AnimatedVisibility(
+                                    loading2.value,
+                                    modifier = Modifier.wrapContentHeight()
+                                ) {
                                     CircularProgressIndicator(
                                         color = MaterialTheme.colorScheme.inverseOnSurface,
                                         modifier = Modifier
@@ -648,13 +632,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         onActionTTS(
                                             OnAction.SaveAsMp3(
                                                 mainState.value.text,
-                                                mainState.value.name ,
+                                                mainState.value.name,
                                                 mainState.value.selectedLanguage
                                             )
                                         )
-                                        //                        showInterstitial(context) {
-                                        //
-                                        //                        }
                                         return@KeyboardActions
                                     }
                                 }),
@@ -732,7 +713,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             fontFamily = FontFamily.Serif
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                        Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                                        Icon(
+                                            imageVector = Icons.Default.Save,
+                                            contentDescription = "Save"
+                                        )
                                     }
                                 }
                             }
@@ -782,7 +766,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         onActionTTS(
                                             OnAction.SaveAsMp3(
                                                 mainState.value.text2,
-                                                mainState.value.name2 ,
+                                                mainState.value.name2,
                                                 mainState.value.selectedLanguage2
                                             )
                                         )
@@ -827,8 +811,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             onActionTTS(
                                                 OnAction.SaveAsMp3(
                                                     mainState.value.text2,
-                                                    mainState.value.name2 ,
-                                                            mainState.value.selectedLanguage2
+                                                    mainState.value.name2,
+                                                    mainState.value.selectedLanguage2
                                                 )
 
                                             )
@@ -860,7 +844,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             fontFamily = FontFamily.Serif
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                        Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                                        Icon(
+                                            imageVector = Icons.Default.Save,
+                                            contentDescription = "Save"
+                                        )
                                     }
                                 }
 
@@ -890,58 +877,9 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 ),
                 modifier = Modifier.padding(top = 15.dp)
             )
-//
-//            AdmobBanner(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(top = 12.dp)
-//            )
         }
     }
 
 }
-
-
-//private var mInterstitialAd: InterstitialAd? = null
-//
-//fun loadInterstitial(context: Context) {
-//    if (mInterstitialAd == null) {
-//        InterstitialAd.load(context,
-//            AdRequest.Builder().build(),
-//            object : InterstitialAdLoadCallback() {
-//                override fun onAdFailedToLoad(adError: LoadAdError) {
-//                    mInterstitialAd = null
-//                    Log.e("adError", adError.message)
-//                }
-//
-//                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-//                    mInterstitialAd = interstitialAd
-//                }
-//            })
-//    }
-//}
-//
-//fun showInterstitial(context: Context, onAdDismissed: () -> Unit) {
-//    if (mInterstitialAd != null) {
-//        mInterstitialAd!!.fullScreenContentCallback = object : FullScreenContentCallback() {
-//            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-//                mInterstitialAd = null
-//            }
-//
-//            override fun onAdDismissedFullScreenContent() {
-//                mInterstitialAd = null
-//                onAdDismissed()
-//                CoroutineScope(Dispatchers.Main).launch {
-//                    loadInterstitial(context)
-//                }
-//            }
-//        }
-//        mInterstitialAd!!.show(context as Activity)
-//    } else {
-//        CoroutineScope(Dispatchers.Main).launch {
-//            loadInterstitial(context)
-//        }
-//    }
-//}
 
 

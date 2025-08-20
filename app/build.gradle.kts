@@ -1,20 +1,20 @@
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.jetbrainsKotlinAndroid)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.hearout.app"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.hearout.app"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 11
-        versionName = "1.11"
+        targetSdk = 36
+        versionCode = 12
+        versionName = "1.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -44,18 +44,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
-        kotlinOptions {
-            jvmTarget = "17"
-        }
 
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
     }
     packaging  {
         resources {
@@ -67,41 +61,40 @@ android {
 
 dependencies {
 
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.1")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation (platform("androidx.compose:compose-bom:2024.05.00"))
-    implementation("androidx.compose.ui:ui:1.6.7")
-    implementation("androidx.compose.ui:ui-graphics:1.6.7")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.6.7")
-    implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.core:core-ktx:1.13.1")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.7")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.6.7")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.7")
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.activity.compose)
+    implementation (platform(libs.compose.bom))
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.core.ktx)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 
     // sdp and ssp
-    implementation("com.intuit.ssp:ssp-android:1.0.6")
-    implementation("com.intuit.sdp:sdp-android:1.1.0")
+    implementation(libs.ssp.android)
+    implementation(libs.sdp.android)
 
     //translate
-    implementation("com.google.mlkit:translate:17.0.2")
+    //noinspection Aligned16KB
+    implementation(libs.translate)
 
     //icons
-    implementation("androidx.compose.material:material-icons-extended:1.6.7")
+    implementation(libs.androidx.material.icons.extended)
 
     // navigation
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.androidx.navigation.compose)
 
     // lifecycle compose
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.1")
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     //splash screen
-    implementation("androidx.core:core-splashscreen:1.0.1")
-
-//    implementation("com.google.android.gms:play-services-ads:23.0.0")
-
-
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.app.update.ktx)
+    implementation(libs.review.ktx)
 }
