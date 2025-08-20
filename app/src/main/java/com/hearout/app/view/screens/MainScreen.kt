@@ -771,9 +771,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                             )
                                         )
                                         onActionTTS(OnAction.CloseDialog2)
-//                        showInterstitial(context) {
-//
-//                        }
                                         return@KeyboardActions
                                     }
                                 }),
