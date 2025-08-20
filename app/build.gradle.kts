@@ -81,7 +81,6 @@ dependencies {
     implementation(libs.sdp.android)
 
     //translate
-    //noinspection Aligned16KB
     implementation(libs.translate)
 
     //icons
