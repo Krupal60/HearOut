@@ -22,10 +22,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CloudDownload
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.rounded.CloudDownload
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material.icons.rounded.Save
+import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -103,7 +103,7 @@ data class MainScreenState(
 @Composable
 fun MainScreenImpl(viewModel: TTSViewModel = viewModel()) {
     val mainState =
-        viewModel.mainState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current)
+        viewModel.mainState.collectAsStateWithLifecycle()
     MainScreen(mainState, viewModel::onActionTTS)
 }
 
@@ -198,7 +198,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 .padding(end = 5.dp),
                             data = languages,
                             selected = mainState.value.selectedLanguage,
-                            onOptionSelected = { language, languagecode ->
+                            onOptionSelected = { language, languageCode ->
                                 val country = when (language) {
                                     "English(US)" -> {
                                         "US"
@@ -217,10 +217,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     }
                                 }
                                 onActionTTS(OnAction.SelectedLanguage(language))
-                                onActionTTS(OnAction.SelectedCode(languagecode, country))
+                                onActionTTS(OnAction.SelectedCode(languageCode, country))
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    onActionTTS(OnAction.SetLanguage(languagecode, country))
-                                    onActionTTS(OnAction.OnGetVoices(languagecode, country))
+                                    onActionTTS(OnAction.SetLanguage(languageCode, country))
+                                    onActionTTS(OnAction.OnGetVoices(languageCode, country))
                                 }
                             })
 
@@ -305,7 +305,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                                 Icon(
-                                    imageVector = if (mainState.value.isSpeaking) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    imageVector = if (mainState.value.isSpeaking) Icons.Rounded.Stop else Icons.Rounded.PlayArrow,
                                     contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak"
                                 )
 
@@ -351,7 +351,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                                Icon(imageVector = Icons.Rounded.Save, contentDescription = "Save")
                             }
                         }
                     }
@@ -395,7 +395,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     )
                     Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                     Icon(
-                        imageVector = Icons.Default.CloudDownload,
+                        imageVector = Icons.Rounded.CloudDownload,
                         contentDescription = "Download icon"
                     )
                     AnimatedVisibility(visible = mainState.value.convertLoading) {
@@ -429,7 +429,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 .padding(end = 5.dp),
                             data = languages,
                             selected = mainState.value.selectedLanguage2,
-                            onOptionSelected = { language, languagecode ->
+                            onOptionSelected = { language, languageCode ->
                                 val country = when (language) {
                                     "English(US)" -> {
                                         "US"
@@ -448,10 +448,10 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     }
                                 }
                                 onActionTTS(OnAction.SelectedLanguage2(language))
-                                onActionTTS(OnAction.SelectedCode2(languagecode, country))
+                                onActionTTS(OnAction.SelectedCode2(languageCode, country))
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    onActionTTS(OnAction.SetLanguage2(languagecode, country))
-                                    onActionTTS(OnAction.OnGetVoices2(languagecode, country))
+                                    onActionTTS(OnAction.SetLanguage2(languageCode, country))
+                                    onActionTTS(OnAction.OnGetVoices2(languageCode, country))
                                 }
                             })
 
@@ -549,7 +549,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                                 Icon(
-                                    imageVector = if (mainState.value.isSpeaking2) Icons.Default.Stop else Icons.Default.PlayArrow,
+                                    imageVector = if (mainState.value.isSpeaking2) Icons.Rounded.Stop else Icons.Rounded.PlayArrow,
                                     contentDescription = if (mainState.value.isSpeaking) "Stop" else "Speak"
                                 )
 
@@ -595,7 +595,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                                Icon(imageVector = Icons.Default.Save, contentDescription = "Save")
+                                Icon(imageVector = Icons.Rounded.Save, contentDescription = "Save")
                             }
                         }
                     }
@@ -733,7 +733,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                                         Icon(
-                                            imageVector = Icons.Default.Save,
+                                            imageVector = Icons.Rounded.Save,
                                             contentDescription = "Save"
                                         )
                                     }
@@ -861,7 +861,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
                                         Icon(
-                                            imageVector = Icons.Default.Save,
+                                            imageVector = Icons.Rounded.Save,
                                             contentDescription = "Save"
                                         )
                                     }

@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -32,19 +32,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-
-
-//@Composable
-//fun AdmobBanner(modifier: Modifier) {
-//    AndroidView(modifier = modifier, factory = { context ->
-//        AdView(context).apply {
-//            setAdSize(AdSize.BANNER)
-//            adUnitId = "ca-app-pub-4376590123999291/6943762773"
-//            loadAd(AdRequest.Builder().build())
-//        }
-//
-//    })
-//}
 
 val Int.sdp: Dp
     @Composable
@@ -113,7 +100,7 @@ fun SingleDropDownMenu(
                     .padding(start = 15.dp, end = 15.dp)
             )
             Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
+                imageVector = Icons.Rounded.ArrowDropDown,
                 contentDescription = "Set $labelText",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -161,7 +148,7 @@ fun SingleDropDownMenu2(
             .clip(RoundedCornerShape(8.dp))
             .clickable {
                 expanded = true
-           }
+            }
             .height(height = 38.sdp)
     ) {
         Row(
@@ -177,7 +164,7 @@ fun SingleDropDownMenu2(
                     .padding(start = 15.dp, end = 15.dp)
             )
             Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
+                imageVector = Icons.Rounded.ArrowDropDown,
                 contentDescription = "Set $labelText",
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -199,7 +186,7 @@ fun SingleDropDownMenu2(
                     }, trailingIcon = {
                         if (boolean) {
                             Icon(
-                                imageVector = Icons.Default.Download,
+                                imageVector = Icons.Rounded.Download,
                                 contentDescription = "Download Icon"
                             )
                         }
