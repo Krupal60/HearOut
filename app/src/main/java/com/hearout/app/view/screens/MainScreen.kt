@@ -372,7 +372,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         return@OutlinedButton
                     }
                     if (mainState.value.text.isEmpty() || mainState.value.text.isBlank()) {
-                        Toast.makeText(context, "Enter Text", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Enter Text in Above Box", Toast.LENGTH_SHORT)
+                            .show()
                         return@OutlinedButton
                     }
                     onActionTTS(
