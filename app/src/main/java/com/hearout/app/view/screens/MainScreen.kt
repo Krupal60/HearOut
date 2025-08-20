@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -28,6 +29,7 @@ import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -178,7 +182,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
             }
 
 
-            Card(
+            ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 5.dp)
@@ -236,13 +240,14 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                     }
 
-                    OutlinedTextField(
+                    TextField(
                         value = mainState.value.text,
                         onValueChange = { string ->
 
                             onActionTTS(OnAction.ChangeText(string))
                         },
-                        label = {
+                        shape = RoundedCornerShape(12.dp),
+                        placeholder = {
                             Text(
                                 text = "Enter text in ${mainState.value.selectedLanguage} language",
                                 color = Color.Gray,
@@ -252,7 +257,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(135.dp)
-                            .padding(top = 12.dp)
+                            .padding(top = 12.dp),
+                        colors = TextFieldDefaults.colors(
+                            errorIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
                     )
 
                     Row(modifier = Modifier.padding(top = 12.dp)) {
@@ -401,7 +412,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
 
 
-            Card(
+            ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 15.dp)
@@ -460,13 +471,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                     }
 
-                    OutlinedTextField(
+                    TextField(
                         value = mainState.value.text2,
                         onValueChange = { string ->
 
                             onActionTTS(OnAction.ChangeText2(string))
                         },
-                        label = {
+                        placeholder = {
                             Text(
                                 text = "Enter text in ${mainState.value.selectedLanguage2} language",
                                 color = Color.Gray,
@@ -476,7 +487,14 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(135.dp)
-                            .padding(top = 12.dp)
+                            .padding(top = 12.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.colors(
+                            errorIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent
+                        )
                     )
 
                     Row(
@@ -616,6 +634,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         fontSize = 15.ssp,
                                     )
                                 },
+                                shape = RoundedCornerShape(12.dp),
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                 keyboardActions = KeyboardActions(onDone = {
                                     focus.clearFocus()
@@ -723,7 +742,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         }
                     }
                 }
-
             }
             if (mainState.value.openDialog2) {
                 Dialog(onDismissRequest = { onActionTTS(OnAction.CloseDialog2) }) {
@@ -746,6 +764,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 onValueChange = { string ->
                                     onActionTTS(OnAction.ChangeName2(string))
                                 },
+                                shape = RoundedCornerShape(12.dp),
                                 placeholder = {
                                     Text(
                                         text = "Enter name of .mp3 file",
@@ -852,12 +871,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         }
                     }
                 }
-
             }
-
-
-
-
 
             Text(
                 text = if (mainState.value.mp3File != null) {
