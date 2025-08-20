@@ -157,7 +157,15 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 "Kannada" to "kn",
                 "Punjabi" to "pa",
                 "French" to "fr",
-                "Spanish" to "es"
+                "Spanish" to "es",
+                "Chinese" to "zh",
+                "Japanese" to "ja",
+                "Korean" to "ko",
+                "German" to "de",
+                "Italian" to "it",
+                "Portuguese" to "pt",
+                "Russian" to "ru",
+                "Arabic" to "ar"
             )
 
             LaunchedEffect(Unit) {
@@ -200,21 +208,18 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             selected = mainState.value.selectedLanguage,
                             onOptionSelected = { language, languageCode ->
                                 val country = when (language) {
-                                    "English(US)" -> {
-                                        "US"
-                                    }
-
-                                    "French" -> {
-                                        "FR"
-                                    }
-
-                                    "Spanish" -> {
-                                        "ES"
-                                    }
-
-                                    else -> {
-                                        "IN"
-                                    }
+                                    "English(US)" -> "US"
+                                    "French" -> "FR"
+                                    "Spanish" -> "ES"
+                                    "Chinese" -> "CN"
+                                    "Japanese" -> "JP"
+                                    "Korean" -> "KR"
+                                    "German" -> "DE"
+                                    "Italian" -> "IT"
+                                    "Portuguese" -> "PT"
+                                    "Russian" -> "RU"
+                                    "Arabic" -> "AE"
+                                    else -> "IN"
                                 }
                                 onActionTTS(OnAction.SelectedLanguage(language))
                                 onActionTTS(OnAction.SelectedCode(languageCode, country))
@@ -273,21 +278,25 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     Toast.makeText(context, "Enter text", Toast.LENGTH_SHORT).show()
                                     return@Button
                                 }
-                                if (!mainState.value.isSpeaking && !loading.value) {
-                                    loading.value = true
-                                    onActionTTS(
-                                        OnAction.SpeakText(
-                                            mainState.value.text,
-                                            mainState.value.languageCode,
-                                            mainState.value.countryCode,
-                                            mainState.value.voiceName
+                                when {
+                                    !mainState.value.isSpeaking && !loading.value -> {
+                                        loading.value = true
+                                        onActionTTS(
+                                            OnAction.SpeakText(
+                                                mainState.value.text,
+                                                mainState.value.languageCode,
+                                                mainState.value.countryCode,
+                                                mainState.value.voiceName
+                                            )
                                         )
-                                    )
-                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, true))
-                                } else {
-                                    onActionTTS(OnAction.Stop)
-                                    loading.value = false
-                                    onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, false))
+                                        onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, true))
+                                    }
+
+                                    else -> {
+                                        onActionTTS(OnAction.Stop)
+                                        loading.value = false
+                                        onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, false))
+                                    }
                                 }
                             }, modifier = Modifier
                                 .weight(1f)
@@ -432,21 +441,18 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             selected = mainState.value.selectedLanguage2,
                             onOptionSelected = { language, languageCode ->
                                 val country = when (language) {
-                                    "English(US)" -> {
-                                        "US"
-                                    }
-
-                                    "French" -> {
-                                        "FR"
-                                    }
-
-                                    "Spanish" -> {
-                                        "ES"
-                                    }
-
-                                    else -> {
-                                        "IN"
-                                    }
+                                    "English(US)" -> "US"
+                                    "French" -> "FR"
+                                    "Spanish" -> "ES"
+                                    "Chinese" -> "CN"
+                                    "Japanese" -> "JP"
+                                    "Korean" -> "KR"
+                                    "German" -> "DE"
+                                    "Italian" -> "IT"
+                                    "Portuguese" -> "PT"
+                                    "Russian" -> "RU"
+                                    "Arabic" -> "AE"
+                                    else -> "IN"
                                 }
                                 onActionTTS(OnAction.SelectedLanguage2(language))
                                 onActionTTS(OnAction.SelectedCode2(languageCode, country))
@@ -517,22 +523,26 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     ).show()
                                     return@Button
                                 }
-                                if (!mainState.value.isSpeaking2 && !loading2.value) {
-                                    loading2.value = true
-                                    onActionTTS(
-                                        OnAction.SpeakText2(
-                                            mainState.value.text2,
-                                            mainState.value.languageCode2,
-                                            mainState.value.countryCode2,
-                                            mainState.value.voiceName2
+                                when {
+                                    !mainState.value.isSpeaking2 && !loading2.value -> {
+                                        loading2.value = true
+                                        onActionTTS(
+                                            OnAction.SpeakText2(
+                                                mainState.value.text2,
+                                                mainState.value.languageCode2,
+                                                mainState.value.countryCode2,
+                                                mainState.value.voiceName2
+                                            )
                                         )
-                                    )
-                                    onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, true))
+                                        onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, true))
 
-                                } else {
-                                    onActionTTS(OnAction.Stop2)
-                                    loading2.value = false
-                                    onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, false))
+                                    }
+
+                                    else -> {
+                                        onActionTTS(OnAction.Stop2)
+                                        loading2.value = false
+                                        onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, false))
+                                    }
                                 }
                             }, modifier = Modifier
                                 .weight(1f)
@@ -893,5 +903,4 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
     }
 
 }
-
 
