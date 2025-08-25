@@ -685,7 +685,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 15.dp)
-                                    .height(46.dp)
                             )
 
                             Row(
