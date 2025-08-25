@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
@@ -99,30 +100,32 @@ class TTSViewModel : ViewModel() {
 
 
     private fun convertLanguage(text: String, code1: String, code2: String) {
-        _mainState.value = _mainState.value.copy(convertLoading = true)
-        val options = TranslatorOptions.Builder()
-            .setSourceLanguage(code1)
-            .setTargetLanguage(code2)
-            .build()
-        val translator = Translation.getClient(options)
-        translator.downloadModelIfNeeded()
-            .addOnFailureListener {
-                _mainState.value = _mainState.value.copy(convertLoading = false)
-                Log.e("error", it.toString())
-            }
-            .addOnSuccessListener {
-                translator.translate(text)
-                    .addOnFailureListener {
-                        _mainState.value = _mainState.value.copy(convertLoading = false)
-                        Log.e("error", it.toString())
-                    }
-                    .addOnSuccessListener {
-                        _mainState.value = _mainState.value.copy(convertLoading = false)
-                        _mainState.value = _mainState.value.copy(text2 = it)
-                        translator.close()
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            _mainState.value = _mainState.value.copy(convertLoading = true)
+            val options = TranslatorOptions.Builder()
+                .setSourceLanguage(code1)
+                .setTargetLanguage(code2)
+                .build()
+            val translator = Translation.getClient(options)
+            translator.downloadModelIfNeeded()
+                .addOnFailureListener {
+                    _mainState.value = _mainState.value.copy(convertLoading = false)
+                    Log.e("error", it.toString())
+                }
+                .addOnSuccessListener {
+                    translator.translate(text)
+                        .addOnFailureListener {
+                            _mainState.value = _mainState.value.copy(convertLoading = false)
+                            Log.e("error", it.toString())
+                        }
+                        .addOnSuccessListener {
+                            _mainState.value = _mainState.value.copy(convertLoading = false)
+                            _mainState.value = _mainState.value.copy(text2 = it)
+                            translator.close()
+                        }
 
-            }
+                }
+        }
     }
 
     private fun closeDialog2() {
@@ -148,9 +151,8 @@ class TTSViewModel : ViewModel() {
         voiceName: String
     ) {
 
-
         // Call the TTS method to speak out the text
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
                 delay(200L)
                     tts.speakOut(text, languageCode, countryCode, voiceName)
         }
@@ -200,34 +202,6 @@ class TTSViewModel : ViewModel() {
     }
 
 
-
-//    private fun isSpeaking2(speaking: Boolean) {
-//        if (speaking) {
-//            viewModelScope.launch {
-//                delay(100L)
-//                repeat(15) { // Check 15 times with a delay
-//                    delay(100L) // Short delay between checks
-//                    val isTtsSpeaking = tts.isSpeaking2()
-//                    if (isTtsSpeaking) {
-//                        _mainState.value = _mainState.value.copy(
-//                            isSpeaking2 = true,
-//                            isSpeaking = false
-//                        )
-//                    }
-//                }
-//            }
-//            return
-//        }
-//        if (!speaking) {
-//            _mainState.value = _mainState.value.copy(
-//                isSpeaking2 = false,
-//                isSpeaking = false,
-//            )
-//        }
-//
-//    }
-
-
     private fun changeText2(text: String) {
         _mainState.value = _mainState.value.copy(text2 = text)
     }
@@ -240,14 +214,14 @@ class TTSViewModel : ViewModel() {
         voiceName: String
     ) {
         // Call the TTS method to speak out the text
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             delay(200L)
             tts.speakOut(text, languageCode, countryCode, voiceName)
         }
     }
 
     private fun onGetVoices(languageCode: String, countryCode: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             tts.onGetVoices(languageCode, countryCode).toList().let { voices ->
                 // Map voice names to Pair<String, String> ("Voice N" to "voiceName")
                 val mappedData = if (voices.isEmpty()) {
@@ -257,9 +231,8 @@ class TTSViewModel : ViewModel() {
                         Triple("Voice ${index + 1}", voice.name, voice.isNetworkConnectionRequired)
                     }
                 }
-                Log.e("voices", mappedData.toString())
                 // Update voiceNameData with the mapped data
-                viewModelScope.launch(Dispatchers.IO) {
+                withContext(Dispatchers.IO) {
                     _mainState.value = _mainState.value.copy(voiceNameData = mappedData)
                 }
 
@@ -305,126 +278,77 @@ class TTSViewModel : ViewModel() {
     }
 
     private fun saveAsMp3(text: String, fileName: String, selectedLanguage: String) {
-        val folderName = HearOut.hearOut!!.getString(R.string.app_name)
-        val folderPath =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath + File.separator + folderName + File.separator + selectedLanguage
-        val folder = File(folderPath)
+        viewModelScope.launch(Dispatchers.IO) {
+            val folderName = HearOut.hearOut!!.getString(R.string.app_name)
+            val folderPath =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath + File.separator + folderName + File.separator + selectedLanguage
+            val folder = File(folderPath)
 
-        if (!folder.exists()) {
-            folder.mkdirs()
-        }
-        val mp3FileName = "$fileName.mp3"
-        val file = File(folder, mp3FileName)
-        val bundle = Bundle()
-        val params = HashMap<String, String>()
-        val utteranceId = "utteranceId"
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            try {
-                val fileOutputStream = FileOutputStream(file)
-                val parcelFileDescriptor = ParcelFileDescriptor.dup(fileOutputStream.fd)
-                val availableVoices = tts.tts.voices
-                val selectedVoice =
-                    availableVoices.find { it.name == _mainState.value.selectedVoice }
-                if (selectedVoice != null) {
-                    tts.tts.voice = selectedVoice  // Set the selected voice
-                } else {
-                    Log.w("TTS", "Voice with name '${_mainState.value.selectedVoice}' not found")
-                }
-                tts.tts.synthesizeToFile(
-                    text, bundle, parcelFileDescriptor, utteranceId
-                )
-            }catch (e:Exception){
-               e.printStackTrace()
+            if (!folder.exists()) {
+                folder.mkdirs()
             }
-        } else {
-            try {
-                val availableVoices = tts.tts.voices
-                val selectedVoice =
-                    availableVoices.find { it.name == _mainState.value.selectedVoice }
-                if (selectedVoice != null) {
-                    tts.tts.voice = selectedVoice  // Set the selected voice
-                } else {
-                    Log.w("TTS", "Voice with name '${_mainState.value.selectedVoice}' not found")
+            val mp3FileName = "$fileName.mp3"
+            val file = File(folder, mp3FileName)
+            val bundle = Bundle()
+            val params = HashMap<String, String>()
+            val utteranceId = "utteranceId"
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                try {
+                    val fileOutputStream = FileOutputStream(file)
+                    val parcelFileDescriptor = ParcelFileDescriptor.dup(fileOutputStream.fd)
+                    val availableVoices = tts.tts.voices
+                    val selectedVoice =
+                        availableVoices.find { it.name == _mainState.value.selectedVoice }
+                    if (selectedVoice != null) {
+                        tts.tts.voice = selectedVoice  // Set the selected voice
+                    } else {
+                        Log.w(
+                            "TTS",
+                            "Voice with name '${_mainState.value.selectedVoice}' not found"
+                        )
+                    }
+                    tts.tts.synthesizeToFile(
+                        text, bundle, parcelFileDescriptor, utteranceId
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-                params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = utteranceId
-                @Suppress("DEPRECATION") tts.tts.synthesizeToFile(
-                    text, params, file.absolutePath
-                )
-            }catch (e:Exception){
-                e.printStackTrace()
+            } else {
+                try {
+                    val availableVoices = tts.tts.voices
+                    val selectedVoice =
+                        availableVoices.find { it.name == _mainState.value.selectedVoice }
+                    if (selectedVoice != null) {
+                        tts.tts.voice = selectedVoice  // Set the selected voice
+                    } else {
+                        Log.w(
+                            "TTS",
+                            "Voice with name '${_mainState.value.selectedVoice}' not found"
+                        )
+                    }
+                    params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = utteranceId
+                    @Suppress("DEPRECATION") tts.tts.synthesizeToFile(
+                        text, params, file.absolutePath
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            withContext(Dispatchers.Main) {
+                _mainState.value = _mainState.value.copy(mp3File = file.absoluteFile)
             }
         }
-        _mainState.value = _mainState.value.copy(mp3File = file.absoluteFile)
     }
 
-//    private fun isSpeaking(speaking: Boolean) {
-//        if (speaking) {
-//            viewModelScope.launch {
-//                delay(100L)
-//                repeat(15) { // Check 15 times with a delay)
-//                    delay(100L) // Short delay between checks
-//                    val ttsSpeaking = tts.isSpeaking()
-//                    if (ttsSpeaking) {
-//                        _mainState.value = _mainState.value.copy(
-//                            isSpeaking2 = false,
-//                            isSpeaking = true
-//                        )
-//                    }
-//
-//                }
-//            }
-//            return
-//        }
-//        if (!speaking) {
-//            _mainState.value = _mainState.value.copy(
-//                isSpeaking = false,
-//                isSpeaking2 = false,
-//            )
-//        }
-//
-//    }
 
     private var currentJob: Job? = null
-//    private fun isSpeaking(ttsType: TtsType, speaking: Boolean) {
-//        currentJob?.cancel()
-//
-//        if (speaking) {
-//            currentJob = viewModelScope.launch(Dispatchers.IO) {
-//                delay(100L)
-//                repeat(5000) { // Check 15 times with a delay
-//                    delay(80L) // Short delay between checks
-//                    val ttsSpeaking = tts.isSpeaking()
-//                        _mainState.value = when (ttsType) {
-//                            TtsType.TTS1 -> _mainState.value.copy(
-//                                isSpeaking = ttsSpeaking,
-//                                isSpeaking2 = false
-//                            )
-//                            TtsType.TTS2 -> _mainState.value.copy(
-//                                isSpeaking = false,
-//                                isSpeaking2 = ttsSpeaking
-//                            )
-//                        }
-//
-//
-//                }
-//            }
-//            return
-//        }
-//        if (!speaking) {
-//            _mainState.value = _mainState.value.copy(
-//                isSpeaking = false,
-//                isSpeaking2 = false,
-//            )
-//        }
-//        return
-//    }
 
     private fun isSpeaking(ttsType: TtsType, speaking: Boolean) {
         // Cancel any ongoing job
         currentJob?.cancel()
 
         if (speaking) {
-            currentJob = viewModelScope.launch {
+            currentJob = viewModelScope.launch(Dispatchers.Default) {
                 delay(100L)
                 var consecutiveFalseCount = 0
                 val maxConsecutiveFalseCount = 25 // Adjust as needed
@@ -480,11 +404,9 @@ class TTSViewModel : ViewModel() {
     }
 
 
-
-
-    private fun selectedCode(languagecode: String, countryCode: String) {
+    private fun selectedCode(languageCode: String, countryCode: String) {
         _mainState.value =
-            _mainState.value.copy(languageCode = languagecode, countryCode = countryCode)
+            _mainState.value.copy(languageCode = languageCode, countryCode = countryCode)
     }
 
     private fun selectedLanguage(language: String) {

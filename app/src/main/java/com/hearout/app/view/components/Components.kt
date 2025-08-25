@@ -119,7 +119,8 @@ fun SingleDropDownMenu(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth(0.5F)
+                modifier = Modifier.fillMaxWidth(0.5F),
+                shape = RoundedCornerShape(10)
             ) {
                 data.forEach { (name, code) ->
                     DropdownMenuItem(text = {
@@ -190,7 +191,8 @@ fun SingleDropDownMenu2(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.fillMaxWidth(0.5F)
+                modifier = Modifier.fillMaxWidth(0.5F),
+                shape = RoundedCornerShape(10)
             ) {
                 data.forEach { (name, code, boolean) ->
                     DropdownMenuItem(text = {

@@ -6,7 +6,6 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.Voice
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
 import java.util.Locale
 
 
@@ -16,16 +15,16 @@ class TTS(
 
     private var _tts: TextToSpeech? = null
     val tts get() = _tts!!
-    private var locale: Locale = Locale.getDefault() // Default locale
+    private var locale: Locale = Locale.getDefault()
 
     init {
         _tts = TextToSpeech(context, this)
     }
 
     // Function to set language
-    fun setLanguage(language: String, country: String) {
-        locale = Locale(language, country)
-        _tts?.setLanguage(locale) // Set the language of the TTS instance
+    fun setLanguage(languageCode: String, countryCode: String) {
+        locale = Locale.Builder().setLanguage(languageCode).setRegion(countryCode).build()
+        _tts?.language = locale
     }
 
     override fun onInit(status: Int) {
@@ -38,7 +37,7 @@ class TTS(
                     .show()
                 val installIntent = Intent()
                 installIntent.action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
-                startActivity(context, installIntent, null)
+                context.startActivity(installIntent)
             }
         } else {
             Toast.makeText(context, "Initialization Failed!", Toast.LENGTH_SHORT).show()
@@ -47,50 +46,42 @@ class TTS(
 
     // Function to speak out the message
     fun speakOut(message: String, languageCode: String, countryCode: String, name: String) {
-        try{
-        _tts?.let { tts ->
-            // Set language first
-            tts.setLanguage(Locale(languageCode, countryCode))
+        try {
+            _tts?.let { tts ->
+                // Set language first
+                tts.language =
+                    Locale.Builder().setLanguage(languageCode).setRegion(countryCode).build()
 
-            // If a specific voice name is provided, try to set it
-            val availableVoices = tts.voices
-            val selectedVoice = availableVoices.find { it.name == name }
-            if (selectedVoice != null) {
-                tts.voice = selectedVoice  // Set the selected voice
-            } else {
-                Log.w("TTS", "Voice with name '$name' not found")
+                // If a specific voice name is provided, try to set it
+                val availableVoices = tts.voices
+                val selectedVoice = availableVoices.find { it.name == name }
+                if (selectedVoice != null) {
+                    tts.voice = selectedVoice
+                } else {
+                    Log.w("TTS", "Voice with name '$name' not found")
+                }
+
+                // Now speak the message
+                tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
+            } ?: run {
+                Log.e("TTS", "TextToSpeech engine not initialized yet")
             }
-
-            // Now speak the message
-            tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
-        } ?: run {
-            Log.e("TTS", "TextToSpeech engine not initialized yet")
-        }}catch (e :Exception){
-            Log.e("error",e.toString())
+        } catch (e: Exception) {
+            Log.e("error", e.toString())
         }
     }
 
 
     fun onGetVoices(languageCode: String, countryCode: String): Collection<Voice> {
         val filteredVoices = _tts?.voices?.filter {
-            it.locale == Locale(
-                languageCode,
-                countryCode
-            )
+            it.locale == Locale.Builder().setLanguage(languageCode).setRegion(countryCode).build()
         } ?: emptyList()
         return filteredVoices.toMutableList()
     }
 
     fun isSpeaking(): Boolean {
-        Log.e("TTS", "isSpeaking: ${_tts!!.isSpeaking}")
-             return _tts!!.isSpeaking
-
+        return _tts?.isSpeaking ?: false
     }
-//    fun isSpeaking2(): Boolean {
-//        Log.e("TTS", "isSpeaking: ${_tts!!.isSpeaking}")
-//             return _tts!!.isSpeaking
-//
-//    }
 
     // Function to stop TTS
     fun stop() {

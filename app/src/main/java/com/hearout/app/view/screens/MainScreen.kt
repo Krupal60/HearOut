@@ -145,27 +145,30 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
         ) {
 
             val languages = listOf(
+                "Arabic" to "ar",
+                "Bengali" to "bn",
+                "Chinese" to "zh",
                 "English" to "en",
                 "English(US)" to "en",
-                "Hindi" to "hi",
-                "Gujarati" to "gu",
-                "Bengali" to "bn",
-                "Telugu" to "te",
-                "Marathi" to "mr",
-                "Tamil" to "ta",
-                "Urdu" to "ur",
-                "Kannada" to "kn",
-                "Punjabi" to "pa",
                 "French" to "fr",
-                "Spanish" to "es",
-                "Chinese" to "zh",
-                "Japanese" to "ja",
-                "Korean" to "ko",
                 "German" to "de",
+                "Gujarati" to "gu",
+                "Hindi" to "hi",
+                "Indonesian" to "id",
                 "Italian" to "it",
+                "Japanese" to "ja",
+                "Kannada" to "kn",
+                "Korean" to "ko",
+                "Malayalam" to "ml",
+                "Marathi" to "mr",
                 "Portuguese" to "pt",
+                "Punjabi" to "pa",
                 "Russian" to "ru",
-                "Arabic" to "ar"
+                "Spanish" to "es",
+                "Swahili" to "sw",
+                "Tamil" to "ta",
+                "Telugu" to "te",
+                "Urdu" to "ur"
             )
 
             LaunchedEffect(Unit) {
@@ -460,6 +463,16 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     onActionTTS(OnAction.SetLanguage2(languageCode, country))
                                     onActionTTS(OnAction.OnGetVoices2(languageCode, country))
                                 }
+                                if (!Utils.isNetworkAvailable(context = context) && (mainState.value.text.isEmpty() || mainState.value.text.isBlank())) {
+                                    return@SingleDropDownMenu
+                                }
+                                onActionTTS(
+                                    OnAction.Convert(
+                                        mainState.value.text,
+                                        mainState.value.languageCode,
+                                        languageCode
+                                    )
+                                )
                             })
 
 
@@ -672,6 +685,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 15.dp)
+                                    .height(46.dp)
                             )
 
                             Row(
@@ -685,8 +699,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     onClick = {
                                         onActionTTS(OnAction.CloseDialog)
                                     }, modifier = Modifier
-                                        .weight(1f)
-
+                                        .height(46.dp)
                                 ) {
                                     Text(
                                         "Cancel",
@@ -697,7 +710,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Button(
                                     onClick = {
-
                                         if (mainState.value.text.isEmpty() || mainState.value.text.isBlank()) {
                                             Toast.makeText(
                                                 context,
@@ -731,7 +743,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                                     }, modifier = Modifier
                                         .weight(1f)
-
+                                        .height(46.dp)
                                 ) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
@@ -819,8 +831,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     onClick = {
                                         onActionTTS(OnAction.CloseDialog2)
                                     }, modifier = Modifier
-                                        .weight(1f)
-
+                                        .height(46.dp)
 
                                 ) {
                                     Text(
@@ -832,8 +843,6 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Button(
                                     onClick = {
-
-
                                         if (mainState.value.name2.isNotEmpty() || mainState.value.name2.isNotBlank()) {
                                             onActionTTS(
                                                 OnAction.SaveAsMp3(
@@ -858,6 +867,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                                     }, modifier = Modifier
                                         .weight(1f)
+                                        .height(46.dp)
 
 
                                 ) {
