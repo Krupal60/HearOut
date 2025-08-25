@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
@@ -123,11 +126,21 @@ fun SingleDropDownMenu(
                 shape = RoundedCornerShape(10)
             ) {
                 data.forEach { (name, code) ->
+                    val isSelected = selected == name
                     DropdownMenuItem(text = {
                         Text(
                             text = name, fontSize = 12.ssp,
-                            fontFamily = FontFamily.Serif
+                            fontFamily = FontFamily.Serif,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
+                    }, trailingIcon = {
+                        if (isSelected) {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = "Selected",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }, onClick = {
                         onOptionSelected(name, code)
                         expanded = false
@@ -195,13 +208,21 @@ fun SingleDropDownMenu2(
                 shape = RoundedCornerShape(10)
             ) {
                 data.forEach { (name, code, boolean) ->
+                    val isSelected = selected == name
                     DropdownMenuItem(text = {
                         Text(
                             text = name, fontSize = 12.ssp,
-                            fontFamily = FontFamily.Serif
+                            fontFamily = FontFamily.Serif,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
                     }, trailingIcon = {
-                        if (boolean) {
+                        if (isSelected) {
+                            Icon(
+                                imageVector = Icons.Filled.Check,
+                                contentDescription = "Selected",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        } else if (boolean) {
                             Icon(
                                 imageVector = Icons.Rounded.Download,
                                 contentDescription = "Download Icon"
