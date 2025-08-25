@@ -49,7 +49,12 @@ class TTSViewModel : ViewModel() {
             is OnAction.ChangeName -> changeName(onAction.name)
             is OnAction.ChangeText -> changeText(onAction.text)
             is OnAction.OnGetVoices -> onGetVoices(onAction.languageCode, onAction.countryCode)
-            is OnAction.SaveAsMp3 -> saveAsMp3(onAction.text, onAction.fileName,onAction.selectedLanguage)
+            is OnAction.SaveAsMp3 -> saveAsMp3(
+                onAction.text,
+                onAction.fileName,
+                onAction.selectedLanguage
+            )
+
             is OnAction.SetLanguage -> setLanguage(onAction.languageCode, onAction.countryCode)
             is OnAction.SpeakText -> speakText(
                 onAction.text,
@@ -61,11 +66,11 @@ class TTSViewModel : ViewModel() {
             is OnAction.SelectedLanguage -> selectedLanguage(onAction.language)
             OnAction.Stop -> stop()
             is OnAction.SelectedCode -> selectedCode(onAction.languageCode, onAction.countryCode)
-            is OnAction.IsSpeaking -> isSpeaking(onAction.ttsType,onAction.speaking)
+            is OnAction.IsSpeaking -> isSpeaking(onAction.ttsType, onAction.speaking)
             is OnAction.SelectedVoice -> selectedVoice(onAction.name)
             is OnAction.VoiceName -> voiceName(onAction.name)
             is OnAction.ChangeText2 -> changeText2(onAction.text)
-            is OnAction.IsSpeaking2 -> isSpeaking(onAction.ttsType,onAction.speaking)
+            is OnAction.IsSpeaking2 -> isSpeaking(onAction.ttsType, onAction.speaking)
             is OnAction.OnGetVoices2 -> onGetVoices2(onAction.languageCode, onAction.countryCode)
             is OnAction.SelectedCode2 -> selectedCode2(onAction.languageCode, onAction.countryCode)
             is OnAction.SelectedLanguage2 -> selectedLanguage2(onAction.language)
@@ -95,7 +100,9 @@ class TTSViewModel : ViewModel() {
     }
 
     private fun changeName2(name: String) {
-        _mainState.value = _mainState.value.copy(name2 = name)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(name2 = name)
+        }
     }
 
 
@@ -129,19 +136,27 @@ class TTSViewModel : ViewModel() {
     }
 
     private fun closeDialog2() {
-        _mainState.value = _mainState.value.copy(openDialog2 = false)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(openDialog2 = false, name2 = "")
+        }
     }
 
     private fun closeDialog() {
-        _mainState.value = _mainState.value.copy(openDialog = false)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(openDialog = false, name = "")
+        }
     }
 
     private fun openDialog2() {
-        _mainState.value = _mainState.value.copy(openDialog2 = true)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(openDialog2 = true)
+        }
     }
 
     private fun openDialog() {
-        _mainState.value = _mainState.value.copy(openDialog = true)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(openDialog = true)
+        }
     }
 
     private fun speakText2(
@@ -153,8 +168,8 @@ class TTSViewModel : ViewModel() {
 
         // Call the TTS method to speak out the text
         viewModelScope.launch(Dispatchers.IO) {
-                delay(200L)
-                    tts.speakOut(text, languageCode, countryCode, voiceName)
+            delay(200L)
+            tts.speakOut(text, languageCode, countryCode, voiceName)
         }
     }
 
@@ -167,20 +182,28 @@ class TTSViewModel : ViewModel() {
     }
 
     private fun selectedLanguage2(language: String) {
-        _mainState.value = _mainState.value.copy(selectedLanguage2 = language)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(selectedLanguage2 = language)
+        }
     }
 
     private fun selectedCode2(languageCode: String, countryCode: String) {
-        _mainState.value =
-            _mainState.value.copy(languageCode2 = languageCode, countryCode2 = countryCode)
+        viewModelScope.launch {
+            _mainState.value =
+                _mainState.value.copy(languageCode2 = languageCode, countryCode2 = countryCode)
+        }
     }
 
     private fun selectedVoice2(name: String) {
-        _mainState.value = _mainState.value.copy(selectedVoice2 = name)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(selectedVoice2 = name)
+        }
     }
 
     private fun voiceName2(name: String) {
-        _mainState.value = _mainState.value.copy(voiceName2 = name)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(voiceName2 = name)
+        }
     }
 
     private fun onGetVoices2(languageCode: String, countryCode: String) {
@@ -203,7 +226,9 @@ class TTSViewModel : ViewModel() {
 
 
     private fun changeText2(text: String) {
-        _mainState.value = _mainState.value.copy(text2 = text)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(text2 = text)
+        }
     }
 
 
@@ -250,31 +275,43 @@ class TTSViewModel : ViewModel() {
 
 
     private fun changeName(name: String) {
-        _mainState.value = _mainState.value.copy(name = name)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(name = name)
+        }
     }
 
     private fun changeText(text: String) {
-        _mainState.value = _mainState.value.copy(text = text)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(text = text)
+        }
     }
 
     override fun onCleared() {
-        _mainState.value = _mainState.value
-        tts.shutDown()
+        viewModelScope.launch {
+            _mainState.value = _mainState.value
+            tts.shutDown()
+        }
         super.onCleared()
     }
 
     private fun stop() {
-        tts.stop()
+        viewModelScope.launch {
+            tts.stop()
+        }
     }
 
 
     private fun voiceName(name: String) {
-        _mainState.value = _mainState.value.copy(voiceName = name)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(voiceName = name)
+        }
     }
 
 
     private fun selectedVoice(name: String) {
-        _mainState.value = _mainState.value.copy(selectedVoice = name)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(selectedVoice = name)
+        }
     }
 
     private fun saveAsMp3(text: String, fileName: String, selectedLanguage: String) {
@@ -363,6 +400,7 @@ class TTSViewModel : ViewModel() {
                             isSpeaking = ttsSpeaking,
                             isSpeaking2 = false
                         )
+
                         TtsType.TTS2 -> _mainState.value.copy(
                             isSpeaking = false,
                             isSpeaking2 = ttsSpeaking
@@ -389,6 +427,7 @@ class TTSViewModel : ViewModel() {
                         isSpeaking = false,
                         isSpeaking2 = false
                     )
+
                     TtsType.TTS2 -> _mainState.value.copy(
                         isSpeaking = false,
                         isSpeaking2 = false
@@ -405,12 +444,16 @@ class TTSViewModel : ViewModel() {
 
 
     private fun selectedCode(languageCode: String, countryCode: String) {
-        _mainState.value =
-            _mainState.value.copy(languageCode = languageCode, countryCode = countryCode)
+        viewModelScope.launch {
+            _mainState.value =
+                _mainState.value.copy(languageCode = languageCode, countryCode = countryCode)
+        }
     }
 
     private fun selectedLanguage(language: String) {
-        _mainState.value = _mainState.value.copy(selectedLanguage = language)
+        viewModelScope.launch {
+            _mainState.value = _mainState.value.copy(selectedLanguage = language)
+        }
     }
 
 
