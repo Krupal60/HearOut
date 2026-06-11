@@ -1,4 +1,4 @@
-package com.hearout.app.view.components
+package com.hearout.app.ui.components
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState

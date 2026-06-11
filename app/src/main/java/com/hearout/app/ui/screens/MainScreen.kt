@@ -1,4 +1,4 @@
-package com.hearout.app.view.screens
+package com.hearout.app.ui.screens
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
@@ -63,10 +63,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hearout.app.R
 import com.hearout.app.domain.OnAction
 import com.hearout.app.domain.TtsType
-import com.hearout.app.view.components.SingleDropDownMenu
-import com.hearout.app.view.components.SingleDropDownMenu2
-import com.hearout.app.view.components.ssp
-import com.hearout.app.view.utils.Utils
+import com.hearout.app.ui.components.ssp
+import com.hearout.app.ui.utils.Utils
 import com.hearout.app.viewmodel.TTSViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -203,7 +201,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)
                 ) {
                     Row {
-                        SingleDropDownMenu(
+                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 5.dp),
@@ -233,7 +231,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             })
 
 
-                        SingleDropDownMenu2(
+                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu2(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 5.dp),
@@ -436,7 +434,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)
                 ) {
                     Row {
-                        SingleDropDownMenu(
+                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 5.dp),
@@ -476,7 +474,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             })
 
 
-                        SingleDropDownMenu2(
+                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu2(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 5.dp),

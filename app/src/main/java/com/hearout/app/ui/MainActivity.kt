@@ -1,4 +1,4 @@
-package com.hearout.app.view
+package com.hearout.app.ui
 
 import android.graphics.Color
 import android.os.Build
@@ -23,7 +23,6 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.hearout.app.ui.theme.HearOutAiTheme
-import com.hearout.app.view.screens.MainScreenImpl
 
 
 class MainActivity : ComponentActivity() {
@@ -78,7 +77,7 @@ class MainActivity : ComponentActivity() {
                             manager.launchReviewFlow(this, reviewInfo)
                         }
                     }
-                    MainScreenImpl()
+                    _root_ide_package_.com.hearout.app.ui.screens.MainScreenImpl()
                 }
             }
         }

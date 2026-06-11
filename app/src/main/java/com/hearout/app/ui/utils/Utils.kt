@@ -1,4 +1,4 @@
-package com.hearout.app.view.utils
+package com.hearout.app.ui.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
