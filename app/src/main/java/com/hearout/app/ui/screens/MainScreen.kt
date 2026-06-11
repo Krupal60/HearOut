@@ -25,7 +25,7 @@ import androidx.compose.material.icons.rounded.CloudDownload
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.CircularWavyProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -72,11 +72,8 @@ import com.hearout.app.ui.theme.HearOutAiTheme
 import com.hearout.app.utils.Utils
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
-import java.util.Locale
-import kotlin.time.Duration.Companion.milliseconds
 
 private val LANGUAGES: ImmutableList<Pair<String, String>> = persistentListOf(
     "Arabic" to "ar",
@@ -164,7 +161,11 @@ fun MainScreenImpl(modifier: Modifier = Modifier, viewModel: TTSViewModel = koin
             }
         }
     }
-
+    val currentOnAction by rememberUpdatedState(viewModel::onActionTTS)
+    LaunchedEffect(Unit) {
+        currentOnAction(OnTTTSAction.OnTTTSGetVoices("en", "IN"))
+        currentOnAction(OnTTTSAction.OnTTTSGetVoices2("hi", "IN"))
+    }
     MainScreen(
         state = state,
         onAction = viewModel::onActionTTS,
@@ -210,20 +211,13 @@ fun MainScreen(
     }
 }
 
-@Suppress("EffectKeys")
 @Composable
 private fun MainContent(
     state: MainScreenState,
     onAction: (OnTTTSAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentOnAction by rememberUpdatedState(onAction)
     Column(modifier = modifier) {
-        LaunchedEffect(Unit) {
-            currentOnAction(OnTTTSAction.OnTTTSGetVoices("en", Locale.getDefault().country))
-            delay(200.milliseconds)
-            currentOnAction(OnTTTSAction.OnTTTSGetVoices2("hi", Locale.getDefault().country))
-        }
 
         TtsSourceSection(
             state = state,
@@ -380,7 +374,7 @@ private fun TtsSourceSection(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp)
+                        .height(52.dp)
                         .padding(end = 4.dp)
                 )
 
@@ -389,7 +383,7 @@ private fun TtsSourceSection(
                     onSave = { onAction(OnTTTSAction.OpenDialog) },
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp)
+                        .height(52.dp)
                         .padding(start = 4.dp)
                 )
             }
@@ -512,7 +506,7 @@ private fun TtsTargetSection(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp)
+                        .height(52.dp)
                         .padding(end = 4.dp)
                 )
 
@@ -521,7 +515,7 @@ private fun TtsTargetSection(
                     onSave = { onAction(OnTTTSAction.OpenDialog2) },
                     modifier = Modifier
                         .weight(1f)
-                        .height(56.dp)
+                        .height(52.dp)
                         .padding(start = 4.dp)
                 )
             }
@@ -572,7 +566,7 @@ private fun SpeakStopButton(
                 visible = loading,
                 modifier = Modifier.wrapContentHeight()
             ) {
-                CircularProgressIndicator(
+                CircularWavyProgressIndicator(
                     color = MaterialTheme.colorScheme.inverseOnSurface,
                     modifier = Modifier
                         .size(32.dp)
@@ -631,7 +625,7 @@ private fun ConvertButton(
         FilledTonalButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(64.dp),
+                .height(55.dp),
             onClick = {
                 if (!Utils.isNetworkAvailable(context = context)) {
                     onAction(OnTTTSAction.ShowToast("Need Internet Connection"))
@@ -668,7 +662,7 @@ private fun ConvertButton(
                     contentDescription = "Download icon"
                 )
                 AnimatedVisibility(visible = state.convertLoading) {
-                    CircularProgressIndicator(
+                    CircularWavyProgressIndicator(
                         modifier = Modifier
                             .size(32.dp)
                             .padding(start = 8.dp)

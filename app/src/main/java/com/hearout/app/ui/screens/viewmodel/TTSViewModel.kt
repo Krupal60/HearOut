@@ -25,11 +25,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
-import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
 class TTSViewModel(
@@ -44,7 +44,7 @@ class TTSViewModel(
     val effects: Flow<MainScreenEffect> = _effects.receiveAsFlow()
 
     init {
-        tts.setLanguage("en", Locale.getDefault().country)
+        tts.setLanguage("en", "IN")
     }
 
     fun onActionTTS(onTTTSAction: OnTTTSAction) {
@@ -233,6 +233,7 @@ class TTSViewModel(
 
     private fun onGetVoices(languageCode: String, countryCode: String, isSecond: Boolean) {
         viewModelScope.launch {
+            tts.isInitialized.first { it }
             tts.getVoices(languageCode, countryCode).let { voices ->
                 val mappedData = if (voices.isEmpty()) {
                     listOf(Triple("Voice 1", "", true))

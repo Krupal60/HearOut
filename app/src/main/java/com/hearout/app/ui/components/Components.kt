@@ -68,7 +68,7 @@ fun SingleDropDownMenu(
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontFamily = FontFamily.Serif
                 ),
-                modifier = Modifier.weight(1f, fill = false)
+                modifier = Modifier.weight(1f)
             )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
@@ -146,7 +146,7 @@ fun SingleDropDownMenu2(
                 style = MaterialTheme.typography.labelLarge.copy(
                     fontFamily = FontFamily.Serif
                 ),
-                modifier = Modifier.weight(1f, fill = false)
+                modifier = Modifier.weight(1f)
             )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,

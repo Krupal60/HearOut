@@ -10,6 +10,9 @@ import android.speech.tts.Voice
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import java.util.Locale
@@ -19,6 +22,9 @@ class TTS : TextToSpeech.OnInitListener, KoinComponent {
     private val context: Context by inject()
     private var _tts: TextToSpeech? = null
     private var locale: Locale = Locale.getDefault()
+
+    private val _isInitialized = MutableStateFlow(false)
+    val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
 
     init {
         _tts = TextToSpeech(context, this)
@@ -38,6 +44,7 @@ class TTS : TextToSpeech.OnInitListener, KoinComponent {
         if (status == TextToSpeech.SUCCESS) {
             // Set the language on initialization
             val result = _tts?.setLanguage(locale)
+            _isInitialized.value = true
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 showToast("This Language is not supported", Toast.LENGTH_SHORT)
                 showToast("This Language needs to be downloaded", Toast.LENGTH_LONG)
