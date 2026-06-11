@@ -1,18 +1,37 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.compose.compiler)
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_21)
+        languageVersion.set(KotlinVersion.KOTLIN_2_3)
+        apiVersion.set(KotlinVersion.KOTLIN_2_3)
+        freeCompilerArgs.addAll(
+            "-XXLanguage:+ContextParameters",
+            "-XXLanguage:+ExplicitBackingFields",
+            "-opt-in=kotlin.uuid.ExperimentalUuidApi",
+            "-opt-in=androidx.compose.foundation.style.ExperimentalFoundationStyleApi",
+            "-opt-in=androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi",
+            "-opt-in=androidx.compose.foundation.layout.ExperimentalLayoutApi",
+            "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api",
+            "-opt-in=androidx.compose.material.ExperimentalMaterialApi"
+        )
+    }
 }
 
 android {
     namespace = "com.hearout.app"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.hearout.app"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 12
         versionName = "1.12"
 
@@ -25,7 +44,6 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            isShrinkResources = false
             isDebuggable = true
             applicationIdSuffix = ".debug"
             proguardFiles(
@@ -36,7 +54,6 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -57,6 +74,11 @@ android {
         }
     }
 
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {

@@ -1,23 +1,23 @@
 [versions]
-activityCompose="1.10.1"
-agp="8.12.1"
+activityCompose="1.13.0"
+agp= "9.2.1"
 appUpdateKtx = "2.1.0"
-composeBom="2025.08.00"
-coreKtx="1.17.0"
-coreSplashscreen="1.0.1"
+composeBom="2026.05.01"
+coreKtx="1.19.0"
+coreSplashscreen="1.2.0"
 espressoCore="3.7.0"
 junit="4.13.2"
 junitVersion="1.3.0"
-lifecycleRuntimeKtx="2.9.2"
-material3="1.5.0-alpha02"
+lifecycleRuntimeKtx="2.10.0"
+material3="1.5.0-alpha21"
 materialIconsExtended="1.7.8"
-navigationCompose="2.9.3"
+navigationCompose="2.9.8"
 reviewKtx = "2.0.2"
-kotlin = "2.2.10"
+kotlin = "2.4.0"
 sdpAndroid="1.1.1"
 sspAndroid="1.1.1"
 translate="17.0.3"
-ui="1.9.0"
+ui="1.11.2"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -46,5 +46,4 @@ ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "ui" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
