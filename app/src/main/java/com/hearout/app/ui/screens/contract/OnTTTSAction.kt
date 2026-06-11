@@ -68,4 +68,5 @@ sealed class OnTTTSAction {
     data object OpenDialog2 : OnTTTSAction()
     data object CloseDialog : OnTTTSAction()
     data object CloseDialog2 : OnTTTSAction()
+    data class ShowToast(val message: String) : OnTTTSAction()
 }

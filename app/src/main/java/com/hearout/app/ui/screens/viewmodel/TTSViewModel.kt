@@ -15,13 +15,17 @@ import com.hearout.app.R
 import com.hearout.app.data.TTS
 import com.hearout.app.domain.TtsType
 import com.hearout.app.ui.screens.MainScreenState
+import com.hearout.app.ui.screens.contract.MainScreenEffect
 import com.hearout.app.ui.screens.contract.OnTTTSAction
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -35,6 +39,9 @@ class TTSViewModel(
 
     private val _mainState = MutableStateFlow(MainScreenState())
     val mainState: StateFlow<MainScreenState> get() = _mainState.asStateFlow()
+
+    private val _effects = Channel<MainScreenEffect>(Channel.BUFFERED)
+    val effects: Flow<MainScreenEffect> = _effects.receiveAsFlow()
 
     init {
         tts.setLanguage("en", Locale.getDefault().country)
@@ -120,7 +127,12 @@ class TTSViewModel(
             OnTTTSAction.CloseDialog2 -> closeDialog2()
             OnTTTSAction.OpenDialog2 -> openDialog2()
             is OnTTTSAction.ChangeName2 -> changeName2(onTTTSAction.name)
+            is OnTTTSAction.ShowToast -> showToast(onTTTSAction.message)
         }
+    }
+
+    private fun showToast(message: String) {
+        _effects.trySend(MainScreenEffect.ShowToast(message))
     }
 
     private fun changeName2(name: String) {
