@@ -2,7 +2,6 @@ package com.hearout.app.ui.screens
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,20 +25,19 @@ import androidx.compose.material.icons.rounded.CloudDownload
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Stop
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,12 +68,15 @@ import com.hearout.app.ui.components.SingleDropDownMenu2
 import com.hearout.app.ui.screens.contract.MainScreenEffect
 import com.hearout.app.ui.screens.contract.OnTTTSAction
 import com.hearout.app.ui.screens.viewmodel.TTSViewModel
+import com.hearout.app.ui.theme.HearOutAiTheme
 import com.hearout.app.utils.Utils
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 private val LANGUAGES: ImmutableList<Pair<String, String>> = persistentListOf(
     "Arabic" to "ar",
@@ -185,15 +186,15 @@ fun MainScreen(
                 title = {
                     Text(
                         text = "Welcome To ${stringResource(id = R.string.app_name)}",
-                        textDecoration = TextDecoration.None,
-                        style = TextStyle(
-                            fontFamily = FontFamily.Serif,
+                        style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                            lineHeight = 22.sp
+                            fontFamily = FontFamily.Serif
                         )
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             )
         }
     ) { padding ->
@@ -204,8 +205,7 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(start = 14.dp, end = 14.dp, bottom = 10.dp)
-                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
         )
     }
 }
@@ -221,6 +221,7 @@ private fun MainContent(
     Column(modifier = modifier) {
         LaunchedEffect(Unit) {
             currentOnAction(OnTTTSAction.OnTTTSGetVoices("en", Locale.getDefault().country))
+            delay(200.milliseconds)
             currentOnAction(OnTTTSAction.OnTTTSGetVoices2("hi", Locale.getDefault().country))
         }
 
@@ -229,10 +230,14 @@ private fun MainContent(
             onAction = onAction
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         ConvertButton(
             state = state,
             onAction = onAction
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         TtsTargetSection(
             state = state,
@@ -291,18 +296,19 @@ private fun TtsSourceSection(
         if (state.isSpeaking) loading = false
     }
 
-    ElevatedCard(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 5.dp)
-            .wrapContentHeight()
+            .wrapContentHeight(),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)) {
-            Row {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 SingleDropDownMenu(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = 5.dp),
+                        .padding(end = 4.dp),
                     data = LANGUAGES,
                     selected = state.selectedLanguage,
                     onOptionSelect = { language, languageCode ->
@@ -316,7 +322,7 @@ private fun TtsSourceSection(
                 SingleDropDownMenu2(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 5.dp),
+                        .padding(start = 4.dp),
                     data = state.voiceNameData,
                     selected = state.selectedVoice,
                     onOptionSelect = { voice, voiceCode ->
@@ -328,19 +334,21 @@ private fun TtsSourceSection(
             TextField(
                 value = state.text,
                 onValueChange = { onAction(OnTTTSAction.ChangeText(it)) },
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 placeholder = {
                     Text(
                         text = "Enter text in ${state.selectedLanguage} language",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         fontFamily = FontFamily.Serif
                     )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(135.dp)
+                    .height(140.dp)
                     .padding(top = 12.dp),
                 colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     errorIndicatorColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -348,7 +356,7 @@ private fun TtsSourceSection(
                 )
             )
 
-            Row(modifier = Modifier.padding(top = 12.dp)) {
+            Row(modifier = Modifier.padding(top = 16.dp)) {
                 SpeakStopButton(
                     isSpeaking = state.isSpeaking,
                     loading = loading,
@@ -372,8 +380,8 @@ private fun TtsSourceSection(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .height(50.dp)
-                        .padding(end = 5.dp)
+                        .height(56.dp)
+                        .padding(end = 4.dp)
                 )
 
                 SaveMp3Button(
@@ -381,9 +389,8 @@ private fun TtsSourceSection(
                     onSave = { onAction(OnTTTSAction.OpenDialog) },
                     modifier = Modifier
                         .weight(1f)
-                        .height(50.dp)
-                        .imePadding()
-                        .padding(start = 5.dp)
+                        .height(56.dp)
+                        .padding(start = 4.dp)
                 )
             }
         }
@@ -403,19 +410,20 @@ private fun TtsTargetSection(
         if (state.isSpeaking2) loading = false
     }
 
-    ElevatedCard(
+    Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 15.dp)
             .wrapContentHeight()
-            .imePadding()
+            .imePadding(),
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row {
                 SingleDropDownMenu(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(end = 5.dp),
+                        .padding(end = 4.dp),
                     data = LANGUAGES,
                     selected = state.selectedLanguage2,
                     onOptionSelect = { language, languageCode ->
@@ -438,7 +446,7 @@ private fun TtsTargetSection(
                 SingleDropDownMenu2(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = 5.dp),
+                        .padding(start = 4.dp),
                     data = state.voiceNameData2,
                     selected = state.selectedVoice2,
                     onOptionSelect = { voice, voiceCode ->
@@ -453,16 +461,18 @@ private fun TtsTargetSection(
                 placeholder = {
                     Text(
                         text = "Enter text in ${state.selectedLanguage2} language",
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         fontFamily = FontFamily.Serif
                     )
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(135.dp)
+                    .height(140.dp)
                     .padding(top = 12.dp),
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.colors(
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     errorIndicatorColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -472,7 +482,7 @@ private fun TtsTargetSection(
 
             Row(
                 modifier = Modifier
-                    .padding(top = 12.dp)
+                    .padding(top = 16.dp)
                     .imePadding()
             ) {
                 SpeakStopButton(
@@ -502,8 +512,8 @@ private fun TtsTargetSection(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .height(50.dp)
-                        .padding(end = 5.dp)
+                        .height(56.dp)
+                        .padding(end = 4.dp)
                 )
 
                 SaveMp3Button(
@@ -511,8 +521,8 @@ private fun TtsTargetSection(
                     onSave = { onAction(OnTTTSAction.OpenDialog2) },
                     modifier = Modifier
                         .weight(1f)
-                        .height(50.dp)
-                        .padding(start = 5.dp)
+                        .height(56.dp)
+                        .padding(start = 4.dp)
                 )
             }
         }
@@ -528,7 +538,7 @@ private fun SpeakStopButton(
     onStop: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Button(
+    androidx.compose.material3.Button(
         onClick = {
             if (!enabled) {
                 return@Button
@@ -540,7 +550,8 @@ private fun SpeakStopButton(
             }
         },
         modifier = modifier,
-        enabled = enabled || isSpeaking
+        enabled = (enabled || isSpeaking),
+        shape = RoundedCornerShape(24.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -579,7 +590,7 @@ private fun SaveMp3Button(
     onSave: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Button(
+    androidx.compose.material3.Button(
         onClick = {
             if (!enabled) {
                 return@Button
@@ -587,7 +598,8 @@ private fun SaveMp3Button(
             onSave()
         },
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
+        shape = RoundedCornerShape(24.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -613,22 +625,21 @@ private fun ConvertButton(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 15.dp),
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        OutlinedButton(
+        FilledTonalButton(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .height(55.dp),
+                .fillMaxWidth()
+                .height(64.dp),
             onClick = {
                 if (!Utils.isNetworkAvailable(context = context)) {
                     onAction(OnTTTSAction.ShowToast("Need Internet Connection"))
-                    return@OutlinedButton
+                    return@FilledTonalButton
                 }
                 if (state.text.isBlank()) {
                     onAction(OnTTTSAction.ShowToast("Enter Text in Above Box"))
-                    return@OutlinedButton
+                    return@FilledTonalButton
                 }
                 onAction(
                     OnTTTSAction.Convert(
@@ -637,7 +648,8 @@ private fun ConvertButton(
                         state.languageCode2
                     )
                 )
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -645,8 +657,10 @@ private fun ConvertButton(
             ) {
                 Text(
                     text = "Convert To ${state.selectedLanguage2}",
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.Serif
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontFamily = FontFamily.Serif,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 8.dp))
                 Icon(
@@ -656,8 +670,8 @@ private fun ConvertButton(
                 AnimatedVisibility(visible = state.convertLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier
-                            .size(40.dp)
-                            .padding(start = 15.dp, end = 5.dp)
+                            .size(32.dp)
+                            .padding(start = 8.dp)
                     )
                 }
             }
@@ -677,28 +691,36 @@ private fun SaveFileDialog(
     val focus = LocalFocusManager.current
 
     Dialog(onDismissRequest = onDismiss) {
-        Card {
-            Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp)) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 6.dp
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
                 Text(
-                    text = "Enter File Name :",
-                    textDecoration = TextDecoration.None,
-                    style = TextStyle(
-                        fontFamily = FontFamily.Serif,
+                    text = "Save as MP3",
+                    style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
+                        fontFamily = FontFamily.Serif
                     )
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Enter file name",
+                    style = MaterialTheme.typography.bodyMedium
                 )
 
                 OutlinedTextField(
                     value = fileName,
                     onValueChange = onFileNameChange,
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(16.dp),
                     placeholder = {
                         Text(
-                            text = "Enter name of .mp3 file",
-                            color = Color.Gray,
-                            fontFamily = FontFamily.Serif,
-                            fontSize = 15.sp,
+                            text = "e.g. speech_audio",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                            fontFamily = FontFamily.Serif
                         )
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -717,29 +739,22 @@ private fun SaveFileDialog(
                     }),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 15.dp)
+                        .padding(top = 8.dp)
                         .imePadding()
                 )
 
+                Spacer(modifier = Modifier.height(24.dp))
+
                 Row(
-                    modifier = Modifier
-                        .padding(top = 15.dp)
-                        .imePadding(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    OutlinedButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.height(46.dp)
-                    ) {
-                        Text(
-                            "Cancel",
-                            fontSize = 13.sp,
-                            fontFamily = FontFamily.Serif
-                        )
+                    androidx.compose.material3.TextButton(onClick = onDismiss) {
+                        Text("Cancel", fontFamily = FontFamily.Serif)
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Button(
+                    Spacer(modifier = Modifier.width(8.dp))
+                    androidx.compose.material3.Button(
                         onClick = {
                             if (inputText.isBlank()) {
                                 onAction(OnTTTSAction.ShowToast("Enter text"))
@@ -756,25 +771,9 @@ private fun SaveFileDialog(
                                 onAction(OnTTTSAction.ShowToast("Enter file name"))
                             }
                         },
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(46.dp)
+                        shape = RoundedCornerShape(24.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            Text(
-                                "Save .mp3",
-                                fontSize = 12.sp,
-                                fontFamily = FontFamily.Serif
-                            )
-                            Spacer(modifier = Modifier.padding(horizontal = 5.dp))
-                            Icon(
-                                imageVector = Icons.Rounded.Save,
-                                contentDescription = "Save"
-                            )
-                        }
+                        Text("Save", fontFamily = FontFamily.Serif)
                     }
                 }
             }
@@ -782,14 +781,30 @@ private fun SaveFileDialog(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview
 @Composable
-private fun MainScreenPreview() {
-    MainScreen(
-        state = MainScreenState(
-            text = "Hello, this is a sample text for preview",
-            text2 = "नमस्ते, यह पूर्वावलोकन के लिए एक नमूना पाठ है"
-        ),
-        onAction = {}
-    )
+private fun MainScreenPreviewDark() {
+    HearOutAiTheme(true) {
+        MainScreen(
+            state = MainScreenState(
+                text = "Hello, this is a sample text for preview",
+                text2 = "नमस्ते, यह पूर्वावलोकन के लिए एक नमूना पाठ है"
+            ),
+            onAction = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MainScreenPreviewLight() {
+    HearOutAiTheme(false) {
+        MainScreen(
+            state = MainScreenState(
+                text = "Hello, this is a sample text for preview",
+                text2 = "नमस्ते, यह पूर्वावलोकन के लिए एक नमूना पाठ है"
+            ),
+            onAction = {}
+        )
+    }
 }

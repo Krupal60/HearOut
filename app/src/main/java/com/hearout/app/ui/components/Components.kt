@@ -1,6 +1,7 @@
 package com.hearout.app.ui.components
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -16,7 +17,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,35 +47,33 @@ fun SingleDropDownMenu(
         targetValue = if (expanded) 180f else 0f,
         label = "ArrowRotation"
     )
-    OutlinedCard(
-        shape = RoundedCornerShape(8.dp),
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        color = MaterialTheme.colorScheme.surface,
         modifier = modifier
-            .height(height = 38.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .height(40.dp)
+            .clip(RoundedCornerShape(12.dp))
             .clickable {
                 expanded = true
             }
-            .height(height = 38.dp)
     ) {
         Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                selected, fontSize = 12.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 15.dp, end = 15.dp)
+                text = selected,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontFamily = FontFamily.Serif
+                ),
+                modifier = Modifier.weight(1f, fill = false)
             )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = "Set $labelText",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(end = 5.dp)
-                    .graphicsLayer { rotationZ = rotate }
+                modifier = Modifier.graphicsLayer { rotationZ = rotate }
             )
 
 
@@ -82,7 +81,7 @@ fun SingleDropDownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.fillMaxWidth(0.5F),
-                shape = RoundedCornerShape(10)
+                shape = RoundedCornerShape(12.dp)
             ) {
                 data.forEach { (name, code) ->
                     val isSelected = selected == name
@@ -126,35 +125,33 @@ fun SingleDropDownMenu2(
         label = "ArrowRotation2"
     )
 
-    OutlinedCard(
-        shape = RoundedCornerShape(8.dp),
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        color = MaterialTheme.colorScheme.surface,
         modifier = modifier
-            .height(height = 38.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .height(40.dp)
+            .clip(RoundedCornerShape(12.dp))
             .clickable {
                 expanded = true
             }
-            .height(height = 38.dp)
     ) {
         Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                selected, fontSize = 12.sp,
-                fontFamily = FontFamily.Serif,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 15.dp, end = 15.dp)
+                text = selected,
+                style = MaterialTheme.typography.labelLarge.copy(
+                    fontFamily = FontFamily.Serif
+                ),
+                modifier = Modifier.weight(1f, fill = false)
             )
             Icon(
                 imageVector = Icons.Filled.ArrowDropDown,
                 contentDescription = "Set $labelText",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(end = 5.dp)
-                    .graphicsLayer { rotationZ = rotate }
+                modifier = Modifier.graphicsLayer { rotationZ = rotate }
             )
 
 
