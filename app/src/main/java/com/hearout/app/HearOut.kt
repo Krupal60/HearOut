@@ -1,21 +1,19 @@
 package com.hearout.app
 
 import android.app.Application
+import com.hearout.app.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 class HearOut : Application() {
 
     override fun onCreate() {
-        hearOut = this
         super.onCreate()
-    }
-
-    override fun onTerminate() {
-        hearOut = null
-        super.onTerminate()
-    }
-
-    companion object{
-        var hearOut : HearOut? = null
-            private set
+        startKoin {
+            androidLogger()
+            androidContext(this@HearOut)
+            modules(appModule)
+        }
     }
 }

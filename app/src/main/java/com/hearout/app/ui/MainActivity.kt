@@ -10,10 +10,6 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -22,11 +18,14 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.hearout.app.ui.screens.MainScreenImpl
 import com.hearout.app.ui.theme.HearOutAiTheme
 
 
 class MainActivity : ComponentActivity() {
+
     private lateinit var appUpdateManager: AppUpdateManager
+
     private val activityResultLauncher =
         registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
             // handle callback
@@ -65,20 +64,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
             HearOutAiTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val manager = ReviewManagerFactory.create(context)
-                    val request = manager.requestReviewFlow()
-                    request.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val reviewInfo = task.result
-                            manager.launchReviewFlow(this, reviewInfo)
-                        }
+                val manager = ReviewManagerFactory.create(context)
+                val request = manager.requestReviewFlow()
+                request.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val reviewInfo = task.result
+                        manager.launchReviewFlow(this, reviewInfo)
                     }
-                    _root_ide_package_.com.hearout.app.ui.screens.MainScreenImpl()
                 }
+                MainScreenImpl()
             }
         }
     }

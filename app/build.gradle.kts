@@ -98,10 +98,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // sdp and ssp
-    implementation(libs.ssp.android)
-    implementation(libs.sdp.android)
-
     //translate
     implementation(libs.translate)
 
@@ -118,4 +114,9 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.app.update.ktx)
     implementation(libs.review.ktx)
+    implementation(libs.kotlinx.collections.immutable)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 }

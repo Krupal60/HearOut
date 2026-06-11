@@ -13,9 +13,9 @@ material3="1.5.0-alpha21"
 materialIconsExtended="1.7.8"
 navigationCompose="2.9.8"
 reviewKtx = "2.0.2"
+koin = "4.2.1"
 kotlin = "2.4.0"
-sdpAndroid="1.1.1"
-sspAndroid="1.1.1"
+kotlinxCollectionsImmutable = "0.5.0"
 translate="17.0.3"
 ui="1.11.2"
 
@@ -37,9 +37,10 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 junit = { module = "junit:junit", version.ref = "junit" }
 lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "reviewKtx" }
-sdp-android = { module = "com.intuit.sdp:sdp-android", version.ref = "sdpAndroid" }
-ssp-android = { module = "com.intuit.ssp:ssp-android", version.ref = "sspAndroid" }
 translate = { module = "com.google.mlkit:translate", version.ref = "translate" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "ui" }

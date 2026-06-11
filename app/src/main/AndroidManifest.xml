@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-<!--    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>-->
 
     <application
         android:name=".HearOut"
@@ -16,15 +15,10 @@
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.HearOut.Starting"
-        tools:targetApi="34">
-
-<!--        <meta-data-->
-<!--            android:name="com.google.android.gms.ads.APPLICATION_ID"-->
-<!--            android:value="ca-app-pub-4376590123999291~8316" />-->
-
+        tools:targetApi="37">
 
         <activity
-            android:name=".view.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize"
 
@@ -37,10 +31,12 @@
             </intent-filter>
         </activity>
     </application>
+
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
+
 
 </manifest>

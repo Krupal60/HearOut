@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -43,7 +42,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,21 +58,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hearout.app.R
-import com.hearout.app.domain.OnAction
 import com.hearout.app.domain.TtsType
-import com.hearout.app.ui.components.ssp
-import com.hearout.app.ui.utils.Utils
-import com.hearout.app.viewmodel.TTSViewModel
+import com.hearout.app.ui.components.SingleDropDownMenu
+import com.hearout.app.ui.components.SingleDropDownMenu2
+import com.hearout.app.ui.screens.contract.OnTTTSAction
+import com.hearout.app.ui.screens.viewmodel.TTSViewModel
+import com.hearout.app.utils.Utils
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import java.io.File
 import java.util.Locale
-
 
 data class MainScreenState(
     val text: String = "",
@@ -86,8 +90,20 @@ data class MainScreenState(
     val languageCode2: String = "hi",
     val countryCode: String = "IN",
     val countryCode2: String = "IN",
-    val voiceNameData: List<Triple<String, String, Boolean>> = listOf(Triple("Voice 1", "", true)),
-    val voiceNameData2: List<Triple<String, String, Boolean>> = listOf(Triple("Voice 1", "", true)),
+    val voiceNameData: ImmutableList<Triple<String, String, Boolean>> = persistentListOf(
+        Triple(
+            "Voice 1",
+            "",
+            true
+        )
+    ),
+    val voiceNameData2: ImmutableList<Triple<String, String, Boolean>> = persistentListOf(
+        Triple(
+            "Voice 1",
+            "",
+            true
+        )
+    ),
     val selectedVoice: String = "Voice 1",
     val selectedVoice2: String = "Voice 1",
     val voiceName: String = "",
@@ -99,23 +115,27 @@ data class MainScreenState(
 )
 
 @Composable
-fun MainScreenImpl(viewModel: TTSViewModel = viewModel()) {
+fun MainScreenImpl(modifier: Modifier = Modifier, viewModel: TTSViewModel = koinViewModel()) {
     val mainState =
         viewModel.mainState.collectAsStateWithLifecycle()
-    MainScreen(mainState, viewModel::onActionTTS)
+    MainScreen(mainState, viewModel::onActionTTS, modifier)
 }
 
+@Suppress("EffectKeys")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Unit) {
-
+fun MainScreen(
+    mainState: State<MainScreenState>,
+    onActionTTS: (OnTTTSAction) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val focus = LocalFocusManager.current
-
+    val currentOnActionTTS by rememberUpdatedState(onActionTTS)
 
     Scaffold(
+        modifier = modifier,
         topBar = {
-            // Customize your top app bar here
             TopAppBar(
                 title = {
                     Text(
@@ -124,25 +144,24 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         style = TextStyle(
                             fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.ssp,
-                            lineHeight = 22.ssp
+                            fontSize = 16.sp,
+                            lineHeight = 22.sp
                         )
                     )
                 }
             )
-        },
-        modifier = Modifier.safeDrawingPadding()
+        }
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .padding(it)
+                .verticalScroll(rememberScrollState())
                 .padding(start = 14.dp, end = 14.dp, bottom = 10.dp)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
 
-            val languages = listOf(
+            val languages = persistentListOf(
                 "Arabic" to "ar",
                 "Bengali" to "bn",
                 "Chinese" to "zh",
@@ -170,10 +189,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
             )
 
             LaunchedEffect(Unit) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    onActionTTS(OnAction.OnGetVoices("en", Locale.getDefault().country))
-                    onActionTTS(OnAction.OnGetVoices2("hi", Locale.getDefault().country))
-                }
+                currentOnActionTTS(OnTTTSAction.OnTTTSGetVoices("en", Locale.getDefault().country))
+                currentOnActionTTS(OnTTTSAction.OnTTTSGetVoices2("hi", Locale.getDefault().country))
             }
 
 
@@ -201,13 +218,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)
                 ) {
                     Row {
-                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu(
+                        SingleDropDownMenu(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 5.dp),
                             data = languages,
                             selected = mainState.value.selectedLanguage,
-                            onOptionSelected = { language, languageCode ->
+                            onOptionSelect = { language, languageCode ->
                                 val country = when (language) {
                                     "English(US)" -> "US"
                                     "French" -> "FR"
@@ -222,25 +239,25 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     "Arabic" -> "AE"
                                     else -> "IN"
                                 }
-                                onActionTTS(OnAction.SelectedLanguage(language))
-                                onActionTTS(OnAction.SelectedCode(languageCode, country))
+                                onActionTTS(OnTTTSAction.SelectedLanguage(language))
+                                onActionTTS(OnTTTSAction.SelectedCode(languageCode, country))
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    onActionTTS(OnAction.SetLanguage(languageCode, country))
-                                    onActionTTS(OnAction.OnGetVoices(languageCode, country))
+                                    onActionTTS(OnTTTSAction.SetLanguage(languageCode, country))
+                                    onActionTTS(OnTTTSAction.OnTTTSGetVoices(languageCode, country))
                                 }
                             })
 
 
-                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu2(
+                        SingleDropDownMenu2(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 5.dp),
                             data = mainState.value.voiceNameData,
                             selected = mainState.value.selectedVoice,
-                            onOptionSelected = { voice, voiceCode ->
+                            onOptionSelect = { voice, voiceCode ->
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    onActionTTS(OnAction.SelectedVoice(voice))
-                                    onActionTTS(OnAction.VoiceName(voiceCode))
+                                    onActionTTS(OnTTTSAction.SelectedVoice(voice))
+                                    onActionTTS(OnTTTSAction.VoiceName(voiceCode))
                                 }
                             })
 
@@ -250,7 +267,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         value = mainState.value.text,
                         onValueChange = { string ->
 
-                            onActionTTS(OnAction.ChangeText(string))
+                            onActionTTS(OnTTTSAction.ChangeText(string))
                         },
                         shape = RoundedCornerShape(12.dp),
                         placeholder = {
@@ -283,20 +300,20 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     !mainState.value.isSpeaking && !loading.value -> {
                                         loading.value = true
                                         onActionTTS(
-                                            OnAction.SpeakText(
+                                            OnTTTSAction.SpeakText(
                                                 mainState.value.text,
                                                 mainState.value.languageCode,
                                                 mainState.value.countryCode,
                                                 mainState.value.voiceName
                                             )
                                         )
-                                        onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, true))
+                                        onActionTTS(OnTTTSAction.IsSpeaking(TtsType.TTS1, true))
                                     }
 
                                     else -> {
-                                        onActionTTS(OnAction.Stop)
+                                        onActionTTS(OnTTTSAction.Stop)
                                         loading.value = false
-                                        onActionTTS(OnAction.IsSpeaking(TtsType.TTS1, false))
+                                        onActionTTS(OnTTTSAction.IsSpeaking(TtsType.TTS1, false))
                                     }
                                 }
                             }, modifier = Modifier
@@ -310,7 +327,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             ) {
                                 Text(
                                     if (mainState.value.isSpeaking) "Stop" else "Speak",
-                                    fontSize = 12.ssp,
+                                    fontSize = 12.sp,
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -342,7 +359,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     return@Button
                                 }
 
-                                onActionTTS(OnAction.OpenDialog)
+                                onActionTTS(OnTTTSAction.OpenDialog)
 
                             }, modifier = Modifier
                                 .weight(1f)
@@ -357,7 +374,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             ) {
                                 Text(
                                     "Save .mp3",
-                                    fontSize = 12.ssp,
+                                    fontSize = 12.sp,
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -387,7 +404,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         return@OutlinedButton
                     }
                     onActionTTS(
-                        OnAction.Convert(
+                        OnTTTSAction.Convert(
                             mainState.value.text,
                             mainState.value.languageCode,
                             mainState.value.languageCode2
@@ -401,7 +418,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 ) {
                     Text(
                         text = "Convert To ${mainState.value.selectedLanguage2}",
-                        fontSize = 14.ssp,
+                        fontSize = 14.sp,
                         fontFamily = FontFamily.Serif
                     )
                     Spacer(modifier = Modifier.padding(horizontal = 8.dp))
@@ -434,13 +451,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 15.dp)
                 ) {
                     Row {
-                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu(
+                        SingleDropDownMenu(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(end = 5.dp),
                             data = languages,
                             selected = mainState.value.selectedLanguage2,
-                            onOptionSelected = { language, languageCode ->
+                            onOptionSelect = { language, languageCode ->
                                 val country = when (language) {
                                     "English(US)" -> "US"
                                     "French" -> "FR"
@@ -455,17 +472,22 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     "Arabic" -> "AE"
                                     else -> "IN"
                                 }
-                                onActionTTS(OnAction.SelectedLanguage2(language))
-                                onActionTTS(OnAction.SelectedCode2(languageCode, country))
+                                onActionTTS(OnTTTSAction.SelectedLanguage2(language))
+                                onActionTTS(OnTTTSAction.SelectedCode2(languageCode, country))
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    onActionTTS(OnAction.SetLanguage2(languageCode, country))
-                                    onActionTTS(OnAction.OnGetVoices2(languageCode, country))
+                                    onActionTTS(OnTTTSAction.SetLanguage2(languageCode, country))
+                                    onActionTTS(
+                                        OnTTTSAction.OnTTTSGetVoices2(
+                                            languageCode,
+                                            country
+                                        )
+                                    )
                                 }
                                 if (!Utils.isNetworkAvailable(context = context) && (mainState.value.text.isEmpty() || mainState.value.text.isBlank())) {
                                     return@SingleDropDownMenu
                                 }
                                 onActionTTS(
-                                    OnAction.Convert(
+                                    OnTTTSAction.Convert(
                                         mainState.value.text,
                                         mainState.value.languageCode,
                                         languageCode
@@ -474,16 +496,16 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             })
 
 
-                        _root_ide_package_.com.hearout.app.ui.components.SingleDropDownMenu2(
+                        SingleDropDownMenu2(
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(start = 5.dp),
                             data = mainState.value.voiceNameData2,
                             selected = mainState.value.selectedVoice2,
-                            onOptionSelected = { voice, voiceCode ->
+                            onOptionSelect = { voice, voiceCode ->
                                 CoroutineScope(Dispatchers.Main).launch {
-                                    onActionTTS(OnAction.SelectedVoice2(voice))
-                                    onActionTTS(OnAction.VoiceName2(voiceCode))
+                                    onActionTTS(OnTTTSAction.SelectedVoice2(voice))
+                                    onActionTTS(OnTTTSAction.VoiceName2(voiceCode))
                                 }
                             })
 
@@ -493,7 +515,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                         value = mainState.value.text2,
                         onValueChange = { string ->
 
-                            onActionTTS(OnAction.ChangeText2(string))
+                            onActionTTS(OnTTTSAction.ChangeText2(string))
                         },
                         placeholder = {
                             Text(
@@ -538,21 +560,21 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     !mainState.value.isSpeaking2 && !loading2.value -> {
                                         loading2.value = true
                                         onActionTTS(
-                                            OnAction.SpeakText2(
+                                            OnTTTSAction.SpeakText2(
                                                 mainState.value.text2,
                                                 mainState.value.languageCode2,
                                                 mainState.value.countryCode2,
                                                 mainState.value.voiceName2
                                             )
                                         )
-                                        onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, true))
+                                        onActionTTS(OnTTTSAction.IsSpeaking2(TtsType.TTS2, true))
 
                                     }
 
                                     else -> {
-                                        onActionTTS(OnAction.Stop2)
+                                        onActionTTS(OnTTTSAction.Stop2)
                                         loading2.value = false
-                                        onActionTTS(OnAction.IsSpeaking2(TtsType.TTS2, false))
+                                        onActionTTS(OnTTTSAction.IsSpeaking2(TtsType.TTS2, false))
                                     }
                                 }
                             }, modifier = Modifier
@@ -566,7 +588,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             ) {
                                 Text(
                                     if (mainState.value.isSpeaking2) "Stop" else "Speak",
-                                    fontSize = 12.ssp,
+                                    fontSize = 12.sp,
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -599,7 +621,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     return@Button
                                 }
 
-                                onActionTTS(OnAction.OpenDialog2)
+                                onActionTTS(OnTTTSAction.OpenDialog2)
 
                             }, modifier = Modifier
                                 .weight(1f)
@@ -613,7 +635,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             ) {
                                 Text(
                                     "Save .mp3",
-                                    fontSize = 12.ssp,
+                                    fontSize = 12.sp,
                                     fontFamily = FontFamily.Serif
                                 )
                                 Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -627,7 +649,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
 
             if (mainState.value.openDialog) {
-                Dialog(onDismissRequest = { onActionTTS(OnAction.CloseDialog) }) {
+                Dialog(onDismissRequest = { onActionTTS(OnTTTSAction.CloseDialog) }) {
                     Card {
                         Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp)) {
                             Text(
@@ -636,7 +658,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 style = TextStyle(
                                     fontFamily = FontFamily.Serif,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 15.ssp
+                                    fontSize = 15.sp
                                 )
                             )
 
@@ -646,14 +668,14 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             OutlinedTextField(
                                 value = mainState.value.name,
                                 onValueChange = { string ->
-                                    onActionTTS(OnAction.ChangeName(string))
+                                    onActionTTS(OnTTTSAction.ChangeName(string))
                                 },
                                 placeholder = {
                                     Text(
                                         text = "Enter name of .mp3 file",
                                         color = Color.Gray,
                                         fontFamily = FontFamily.Serif,
-                                        fontSize = 15.ssp,
+                                        fontSize = 15.sp,
                                     )
                                 },
                                 shape = RoundedCornerShape(12.dp),
@@ -671,7 +693,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     }
                                     if (mainState.value.name.isNotEmpty() || mainState.value.name.isNotBlank()) {
                                         onActionTTS(
-                                            OnAction.SaveAsMp3(
+                                            OnTTTSAction.SaveAsMp3(
                                                 mainState.value.text,
                                                 mainState.value.name,
                                                 mainState.value.selectedLanguage
@@ -694,13 +716,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             ) {
                                 OutlinedButton(
                                     onClick = {
-                                        onActionTTS(OnAction.CloseDialog)
+                                        onActionTTS(OnTTTSAction.CloseDialog)
                                     }, modifier = Modifier
                                         .height(46.dp)
                                 ) {
                                     Text(
                                         "Cancel",
-                                        fontSize = 13.ssp,
+                                        fontSize = 13.sp,
                                         fontFamily = FontFamily.Serif
                                     )
                                 }
@@ -719,13 +741,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
 
                                         if (mainState.value.name.isNotEmpty() || mainState.value.name.isNotBlank()) {
                                             onActionTTS(
-                                                OnAction.SaveAsMp3(
+                                                OnTTTSAction.SaveAsMp3(
                                                     mainState.value.text,
                                                     mainState.value.name,
                                                     mainState.value.selectedLanguage
                                                 )
                                             )
-                                            onActionTTS(OnAction.CloseDialog)
+                                            onActionTTS(OnTTTSAction.CloseDialog)
                                             return@Button
                                         }
                                         if (mainState.value.name.isEmpty() || mainState.value.name.isBlank()) {
@@ -748,7 +770,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     ) {
                                         Text(
                                             "Save .mp3",
-                                            fontSize = 12.ssp,
+                                            fontSize = 12.sp,
                                             fontFamily = FontFamily.Serif
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -764,7 +786,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 }
             }
             if (mainState.value.openDialog2) {
-                Dialog(onDismissRequest = { onActionTTS(OnAction.CloseDialog2) }) {
+                Dialog(onDismissRequest = { onActionTTS(OnTTTSAction.CloseDialog2) }) {
                     Card {
                         Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp)) {
                             Text(
@@ -773,7 +795,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                 style = TextStyle(
                                     fontFamily = FontFamily.Serif,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 15.ssp
+                                    fontSize = 15.sp
                                 )
                             )
 
@@ -782,7 +804,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             OutlinedTextField(
                                 value = mainState.value.name2,
                                 onValueChange = { string ->
-                                    onActionTTS(OnAction.ChangeName2(string))
+                                    onActionTTS(OnTTTSAction.ChangeName2(string))
                                 },
                                 shape = RoundedCornerShape(12.dp),
                                 placeholder = {
@@ -790,7 +812,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                         text = "Enter name of .mp3 file",
                                         color = Color.Gray,
                                         fontFamily = FontFamily.Serif,
-                                        fontSize = 15.ssp,
+                                        fontSize = 15.sp,
                                     )
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -803,13 +825,13 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     }
                                     if (mainState.value.name2.isNotEmpty() || mainState.value.name2.isNotBlank()) {
                                         onActionTTS(
-                                            OnAction.SaveAsMp3(
+                                            OnTTTSAction.SaveAsMp3(
                                                 mainState.value.text2,
                                                 mainState.value.name2,
                                                 mainState.value.selectedLanguage2
                                             )
                                         )
-                                        onActionTTS(OnAction.CloseDialog2)
+                                        onActionTTS(OnTTTSAction.CloseDialog2)
                                         return@KeyboardActions
                                     }
                                 }),
@@ -826,14 +848,14 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                             ) {
                                 OutlinedButton(
                                     onClick = {
-                                        onActionTTS(OnAction.CloseDialog2)
+                                        onActionTTS(OnTTTSAction.CloseDialog2)
                                     }, modifier = Modifier
                                         .height(46.dp)
 
                                 ) {
                                     Text(
                                         "Cancel",
-                                        fontSize = 13.ssp,
+                                        fontSize = 13.sp,
                                         fontFamily = FontFamily.Serif
                                     )
                                 }
@@ -842,14 +864,14 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     onClick = {
                                         if (mainState.value.name2.isNotEmpty() || mainState.value.name2.isNotBlank()) {
                                             onActionTTS(
-                                                OnAction.SaveAsMp3(
+                                                OnTTTSAction.SaveAsMp3(
                                                     mainState.value.text2,
                                                     mainState.value.name2,
                                                     mainState.value.selectedLanguage2
                                                 )
 
                                             )
-                                            onActionTTS(OnAction.CloseDialog2)
+                                            onActionTTS(OnTTTSAction.CloseDialog2)
                                             return@Button
                                         }
                                         if (mainState.value.name.isEmpty() || mainState.value.name.isBlank()) {
@@ -874,7 +896,7 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                                     ) {
                                         Text(
                                             "Save .mp3",
-                                            fontSize = 12.ssp,
+                                            fontSize = 12.sp,
                                             fontFamily = FontFamily.Serif
                                         )
                                         Spacer(modifier = Modifier.padding(horizontal = 5.dp))
@@ -901,8 +923,8 @@ fun MainScreen(mainState: State<MainScreenState>, onActionTTS: (OnAction) -> Uni
                 style = TextStyle(
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.ssp,
-                    lineHeight = 20.ssp
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp
                 ),
                 modifier = Modifier.padding(top = 15.dp)
             )

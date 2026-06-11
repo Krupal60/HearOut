@@ -1,6 +1,5 @@
 package com.hearout.app.ui.components
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,83 +26,43 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-
-val Int.sdp: Dp
-    @Composable
-    get() = this.sdpGet()
-
-val Int.ssp: TextUnit
-    @Composable get() = this.textSdp(density = LocalDensity.current)
-
-@Composable
-private fun Int.textSdp(density: Density): TextUnit = with(density) {
-    this@textSdp.sdp.toSp()
-}
-
-@Composable
-private fun Int.sdpGet(): Dp {
-
-    val id = when (this) {
-        in 1..600 -> "_${this}sdp"
-        in (-60..-1) -> "_minus${this}sdp"
-        else -> return this.dp
-    }
-
-    val resourceField = getFieldId(id)
-    return if (resourceField != 0) dimensionResource(id = resourceField) else this.dp
-
-}
-
-@SuppressLint("DiscouragedApi")
-@Composable
-private fun getFieldId(id: String): Int {
-    val context = LocalContext.current
-    return context.resources.getIdentifier(id, "dimen", context.packageName)
-
-}
+import androidx.compose.ui.unit.sp
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun SingleDropDownMenu(
-    modifier: Modifier,
-    labelText: String = "",
-    data: List<Pair<String, String>>,
+    data: ImmutableList<Pair<String, String>>,
     selected: String,
-    onOptionSelected: (String, String) -> Unit
+    onOptionSelect: (String, String) -> Unit,
+    modifier: Modifier = Modifier,
+    labelText: String = ""
 ) {
     var expanded by remember { mutableStateOf(false) }
     val rotate by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         label = "ArrowRotation"
-    ) {
-        if (expanded) 180f else 0f
-    }
+    )
     OutlinedCard(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
-            .height(height = 38.sdp)
+            .height(height = 38.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable {
                 expanded = true
             }
-            .height(height = 38.sdp)
+            .height(height = 38.dp)
     ) {
         Row(
-            modifier = modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                selected, fontSize = 12.ssp,
+                selected, fontSize = 12.sp,
                 fontFamily = FontFamily.Serif,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -115,7 +74,7 @@ fun SingleDropDownMenu(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(end = 5.dp)
-                    .rotate(rotate)
+                    .graphicsLayer { rotationZ = rotate }
             )
 
 
@@ -129,7 +88,8 @@ fun SingleDropDownMenu(
                     val isSelected = selected == name
                     DropdownMenuItem(text = {
                         Text(
-                            text = name, fontSize = 12.ssp,
+                            text = name,
+                            fontSize = 12.sp,
                             fontFamily = FontFamily.Serif,
                             color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
@@ -142,7 +102,7 @@ fun SingleDropDownMenu(
                             )
                         }
                     }, onClick = {
-                        onOptionSelected(name, code)
+                        onOptionSelect(name, code)
                         expanded = false
                     })
                 }
@@ -152,40 +112,37 @@ fun SingleDropDownMenu(
 
 }
 
-
 @Composable
 fun SingleDropDownMenu2(
-    modifier: Modifier,
-    labelText: String = "",
-    data: List<Triple<String, String, Boolean>>,
+    data: ImmutableList<Triple<String, String, Boolean>>,
     selected: String,
-    onOptionSelected: (String, String) -> Unit
+    onOptionSelect: (String, String) -> Unit,
+    modifier: Modifier = Modifier,
+    labelText: String = ""
 ) {
     var expanded by remember { mutableStateOf(false) }
     val rotate by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         label = "ArrowRotation2"
-    ) {
-        if (expanded) 180f else 0f
-    }
+    )
 
     OutlinedCard(
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
-            .height(height = 38.sdp)
+            .height(height = 38.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable {
                 expanded = true
             }
-            .height(height = 38.sdp)
+            .height(height = 38.dp)
     ) {
         Row(
-            modifier = modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                selected, fontSize = 12.ssp,
+                selected, fontSize = 12.sp,
                 fontFamily = FontFamily.Serif,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -197,7 +154,7 @@ fun SingleDropDownMenu2(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(end = 5.dp)
-                    .rotate(rotate)
+                    .graphicsLayer { rotationZ = rotate }
             )
 
 
@@ -211,7 +168,8 @@ fun SingleDropDownMenu2(
                     val isSelected = selected == name
                     DropdownMenuItem(text = {
                         Text(
-                            text = name, fontSize = 12.ssp,
+                            text = name,
+                            fontSize = 12.sp,
                             fontFamily = FontFamily.Serif,
                             color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
@@ -229,7 +187,7 @@ fun SingleDropDownMenu2(
                             )
                         }
                     }, onClick = {
-                        onOptionSelected(name, code)
+                        onOptionSelect(name, code)
                         expanded = false
                     })
                 }
