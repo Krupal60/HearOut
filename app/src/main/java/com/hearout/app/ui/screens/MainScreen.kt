@@ -206,7 +206,7 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }

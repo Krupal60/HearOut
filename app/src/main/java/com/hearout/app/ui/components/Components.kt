@@ -1,6 +1,8 @@
 package com.hearout.app.ui.components
 
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
@@ -17,6 +18,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,11 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -45,28 +46,33 @@ fun SingleDropDownMenu(
     var expanded by remember { mutableStateOf(false) }
     val rotate by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
         label = "ArrowRotation"
     )
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = modifier
-            .height(40.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .height(46.dp)
+            .clip(MaterialTheme.shapes.medium)
             .clickable {
                 expanded = true
             }
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = selected,
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontFamily = FontFamily.Serif
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Medium
                 ),
                 modifier = Modifier.weight(1f)
             )
@@ -81,29 +87,39 @@ fun SingleDropDownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.fillMaxWidth(0.5F),
-                shape = RoundedCornerShape(12.dp)
+                shape = MaterialTheme.shapes.extraLarge,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
             ) {
                 data.forEach { (name, code) ->
                     val isSelected = selected == name
-                    DropdownMenuItem(text = {
-                        Text(
-                            text = name,
-                            fontSize = 12.sp,
-                            fontFamily = FontFamily.Serif,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified
-                        )
-                    }, trailingIcon = {
-                        if (isSelected) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = "Selected",
-                                tint = MaterialTheme.colorScheme.primary
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontFamily = FontFamily.Serif,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
                             )
-                        }
-                    }, onClick = {
-                        onOptionSelect(name, code)
-                        expanded = false
-                    })
+                        },
+                        trailingIcon = {
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = "Selected",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        },
+                        onClick = {
+                            onOptionSelect(name, code)
+                            expanded = false
+                        },
+                        colors = MenuDefaults.itemColors(
+                            textColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            trailingIconColor = MaterialTheme.colorScheme.primary
+                        )
+                    )
                 }
             }
         }
@@ -122,29 +138,34 @@ fun SingleDropDownMenu2(
     var expanded by remember { mutableStateOf(false) }
     val rotate by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
         label = "ArrowRotation2"
     )
 
     Surface(
-        shape = RoundedCornerShape(12.dp),
+        shape = MaterialTheme.shapes.medium,
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-        color = MaterialTheme.colorScheme.surface,
+        color = MaterialTheme.colorScheme.surfaceContainerLow,
         modifier = modifier
-            .height(40.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .height(46.dp)
+            .clip(MaterialTheme.shapes.medium)
             .clickable {
                 expanded = true
             }
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = selected,
-                style = MaterialTheme.typography.labelLarge.copy(
-                    fontFamily = FontFamily.Serif
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Medium
                 ),
                 modifier = Modifier.weight(1f)
             )
@@ -159,34 +180,45 @@ fun SingleDropDownMenu2(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.fillMaxWidth(0.5F),
-                shape = RoundedCornerShape(10)
+                shape = MaterialTheme.shapes.extraLarge,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
             ) {
                 data.forEach { (name, code, boolean) ->
                     val isSelected = selected == name
-                    DropdownMenuItem(text = {
-                        Text(
-                            text = name,
-                            fontSize = 12.sp,
-                            fontFamily = FontFamily.Serif,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontFamily = FontFamily.Serif,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            )
+                        },
+                        trailingIcon = {
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = Icons.Filled.Check,
+                                    contentDescription = "Selected",
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            } else if (boolean) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Download,
+                                    contentDescription = "Download Icon",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        },
+                        onClick = {
+                            onOptionSelect(name, code)
+                            expanded = false
+                        },
+                        colors = MenuDefaults.itemColors(
+                            textColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            trailingIconColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                    }, trailingIcon = {
-                        if (isSelected) {
-                            Icon(
-                                imageVector = Icons.Filled.Check,
-                                contentDescription = "Selected",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        } else if (boolean) {
-                            Icon(
-                                imageVector = Icons.Rounded.Download,
-                                contentDescription = "Download Icon"
-                            )
-                        }
-                    }, onClick = {
-                        onOptionSelect(name, code)
-                        expanded = false
-                    })
+                    )
                 }
             }
         }
