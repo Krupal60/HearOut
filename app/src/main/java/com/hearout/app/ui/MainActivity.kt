@@ -18,7 +18,7 @@ import com.google.android.play.core.appupdate.AppUpdateOptions
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.hearout.app.ui.screens.MainScreenImpl
+import com.hearout.app.ui.screens.MainScreen
 import com.hearout.app.ui.theme.HearOutAiTheme
 
 
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                         manager.launchReviewFlow(this, reviewInfo)
                     }
                 }
-                MainScreenImpl()
+                MainScreen()
             }
         }
     }

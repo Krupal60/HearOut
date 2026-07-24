@@ -55,7 +55,6 @@ annotation class ReflectiveExecutor
   com.example.library.ReflectiveExecutor
 
 # Keep members of any class annotated with this specific annotation
-
 -keepclassmembers class \* {
 @com.example.library.ReflectiveExecutor \*;
 }

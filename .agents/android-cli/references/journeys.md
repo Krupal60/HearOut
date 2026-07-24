@@ -1,6 +1,5 @@
 A journey is an XML-specified test of an Android app's behavior. It consists of a list of `<action>`
 elements. For example:
-
 ```xml
 <journey name="My Journey">
    <description>
@@ -47,7 +46,6 @@ them individually:
 Example:
 ```<action>Search for soda and add the first result to the cart</action>```
 This should be evaluated as:
-
 ```
 <action>Search for soda</action>
 <action>Add the first result to the cart</action>
@@ -76,7 +74,6 @@ multiple expectations.
 Example:
 ```<action>Verify that the app is on the Home screen, the Home icon is blue, and the temperature is displayed</action>```
 This `<action>` fails if ANY of the following are false:
-
 - The app is on the Home screen
 - There is a Home icon, and it is blue
 - A temperature is displayed
@@ -93,7 +90,6 @@ Suggestions for bug fixes, clarification, or
 other improvements should be kept to journey evaluation summary at the end.
 
 ## Summarizing
-
 For each `<action>` you evaluated, output JSON describing the results.
 
 ```

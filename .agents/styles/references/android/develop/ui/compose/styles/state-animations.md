@@ -31,6 +31,7 @@ The following example demonstrates modifying the `background` and `borderColor`
 in response to interaction states, specifically switching to purple when hovered
 and blue when focused:
 
+
 ```kotlin
 @Preview
 @Composable
@@ -65,6 +66,7 @@ private fun OpenButton() {
 You can also create nested state definitions. For example, you can define a
 specific style for when a button is being both pressed and hovered
 simultaneously:
+
 
 ```kotlin
 @Composable
@@ -156,6 +158,7 @@ private fun GradientButton(
 You can now use the `interactionSource` state to drive style modifications with
 the pressed, focused, and hovered options inside the style block:
 
+
 ```kotlin
 @Preview
 @Composable
@@ -188,6 +191,7 @@ property within any state change block with `animate` to automatically add
 animations between different states. This is similar to the `animate*AsState`
 APIs. The following example animates the `borderColor` from black to blue when
 the state changes to focused:
+
 
 ```kotlin
 val animatingStyle = Style {
@@ -231,6 +235,7 @@ private fun AnimatingStyleChanges() {
 The `animate` API accepts an `animationSpec` to change the duration or shape of
 the animation curve. The following example animates the size of the box with a
 `spring` spec:
+
 
 ```kotlin
 val animatingStyleSpec = Style {
@@ -317,11 +322,11 @@ var MutableStyleState.playerState
     get() = this[playerStateKey]
     set(value) { this[playerStateKey] = value }
 
-fun StyleScope.playerPlaying(value: Style) {
-    state(playerStateKey, value, { key, state -> state[key] == PlayerState.Playing })
+fun StyleScope.playerPlaying(block: () -> Unit) {
+    state(playerStateKey, block, { key, state -> state[key] == PlayerState.Playing })
 }
-fun StyleScope.playerPaused(value: Style) {
-    state(playerStateKey, value, { key, state -> state[key] == PlayerState.Paused })
+fun StyleScope.playerPaused(block: () -> Unit) {
+    state(playerStateKey, block, { key, state -> state[key] == PlayerState.Paused })
 }
 ```
 
@@ -354,7 +359,7 @@ fun MediaPlayer(
 
 <br />
 
-Within the `style` lambda, you can apply state based styling for custom states,
+Within the `style` lambda, you can apply state-based styling for custom states,
 using the previously defined extension functions.
 
 ```kotlin
@@ -399,11 +404,11 @@ var MutableStyleState.playerState
     get() = this[playerStateKey]
     set(value) { this[playerStateKey] = value }
 
-fun StyleScope.playerPlaying(value: Style) {
-    state(playerStateKey, value, { key, state -> state[key] == PlayerState.Playing })
+fun StyleScope.playerPlaying(block: () -> Unit) {
+    state(playerStateKey, block, { key, state -> state[key] == PlayerState.Playing })
 }
-fun StyleScope.playerPaused(value: Style) {
-    state(playerStateKey, value, { key, state -> state[key] == PlayerState.Paused })
+fun StyleScope.playerPaused(block: () -> Unit) {
+    state(playerStateKey, block, { key, state -> state[key] == PlayerState.Paused })
 
 }
 

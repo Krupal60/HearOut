@@ -3,12 +3,12 @@ name: navigation-3
 description: Learn how to install and migrate to Jetpack Navigation 3, and how to
   implement features and patterns such as deep links, multiple backstacks, scenes
   (dialogs, bottom sheets, list-detail, two-pane, supporting pane), conditional navigation
-  (such as logged-in navigation vs anonymous), returning results from flows, integration
+  (such as logged-in navigation versus anonymous), returning results from flows, integration
   with Hilt, ViewModel, Kotlin, and view interoperability.
 license: Complete terms in LICENSE.txt
 metadata:
   author: Google LLC
-  last-updated: '2026-05-15'
+  last-updated: '2026-07-09'
   keywords:
   - recipe
   - Android
@@ -33,10 +33,11 @@ metadata:
   - View interop.
 ---
 
+*** ** * ** ***
+
 ## Migration guide
 
 -
-
 *[Navigation 2 to Navigation 3 migration guide](references/android/guide/navigation/navigation-3/migration-guide.md)*:
 Step-by-step guide to migrate an Android application from Navigation 2 to Navigation 3, covering
 dependency updates, route changes, state management, and UI component replacements.
@@ -44,14 +45,13 @@ dependency updates, route changes, state management, and UI component replacemen
 ### Requirements
 
 -
-
 *[Guide: Migrate to type-safe navigation in Compose](references/android/guide/navigation/type-safe-destinations.md)* :
 Step-by-step guide to migrating an Android application from string-based navigation to **Type-Safe
 Navigation** in Jetpack Compose using Jetpack Navigation 2.
 
 ## Developer documentation
 
-- \*[Navigation 3](references/android/guide/navigation/navigation-3/index.md). Search documentation
+- *[Navigation 3](references/android/guide/navigation/navigation-3/index.md)*. Search documentation
   for more information on basics, saving and managing navigation state, modularizing navigation
   code, creating custom layouts using Scenes, animating between destinations, or applying logic or
   wrappers to destinations.
@@ -65,10 +65,8 @@ Code examples showcasing common patterns.
 - *[Basic](references/android/guide/navigation/navigation-3/recipes/basic.md)*: Shows most basic API
   usage.
 -
-
 *[Saveable back stack](references/android/guide/navigation/navigation-3/recipes/basicsaveable.md)*:
 Shows basic API usage with a persistent back stack.
-
 - *[Entry provider DSL](references/android/guide/navigation/navigation-3/recipes/basicdsl.md)*:
   Shows basic API usage using the entryProvider DSL.
 
@@ -80,8 +78,8 @@ Shows basic API usage with a persistent back stack.
 
 ### Deep links
 
-- *[Basic](references/android/guide/navigation/navigation-3/recipes/deeplinks-basic.md)*: Shows how
-  to parse a deep link URL from an Android Intent into a navigation key.
+- *[Basic](https://developer.android.com/guide/navigation/navigation-3/recipes/deeplinks-basic)*:
+  Shows how to parse a deep link URL from an Android Intent into a navigation key.
 - *[Advanced](references/android/guide/navigation/navigation-3/recipes/deeplinks-advanced.md)*:
   Shows how to handle deep links with a synthetic back stack and correct "Up" navigation behavior.
 
@@ -97,22 +95,17 @@ Shows basic API usage with a persistent back stack.
 - *[BottomSheet](references/android/guide/navigation/navigation-3/recipes/bottomsheet.md)*: Shows
   how to create a BottomSheet destination.
 -
-
 *[List-Detail Scene](references/android/guide/navigation/navigation-3/recipes/scenes-listdetail.md)*:
 Demonstrates how to implement adaptive list-detail layouts using the Navigation 3 Scenes API.
-
 - *[Two pane Scene](references/android/guide/navigation/navigation-3/recipes/scenes-twopane.md)*:
   Demonstrates how to implement adaptive two-pane layouts using the Navigation 3 Scenes API.
 
 ### Material Adaptive
 
 -
-
 *[Material List-Detail](references/android/guide/navigation/navigation-3/recipes/material-listdetail.md)*:
 Demonstrates how to implement an adaptive list-detail layout using Material 3 Adaptive.
-
 -
-
 *[Material Supporting Pane](references/android/guide/navigation/navigation-3/recipes/material-supportingpane.md)*:
 Demonstrates how to implement an adaptive supporting pane layout using Material 3 Adaptive.
 
@@ -124,7 +117,6 @@ Demonstrates how to implement an adaptive supporting pane layout using Material 
 ### Common back stack behavior
 
 -
-
 *[Multiple back stacks](references/android/guide/navigation/navigation-3/recipes/multiple-backstacks.md)*:
 Shows how to create multiple top level routes, each with its own back stack. Top level routes are
 displayed in a navigation bar allowing users to switch between them. State is retained for each top
@@ -133,7 +125,6 @@ level route, and the navigation state persists config changes and process death.
 ### Conditional navigation
 
 -
-
 *[Conditional navigation](references/android/guide/navigation/navigation-3/recipes/conditional.md)*:
 Switch to a different navigation flow when a condition is met. For example, for authentication or
 first-time user onboarding.
@@ -141,12 +132,9 @@ first-time user onboarding.
 ### Architecture
 
 -
-
 *[Modularized navigation code (Hilt)](references/android/guide/navigation/navigation-3/recipes/modular-hilt.md)*:
 Demonstrates how to decouple navigation code into separate modules using Hilt or Dagger for DI.
-
 -
-
 *[Modularized navigation code (Koin)](references/android/guide/navigation/navigation-3/recipes/modular-koin.md)*:
 Demonstrates how to decouple navigation code into separate modules using Koin for DI.
 
@@ -155,18 +143,14 @@ Demonstrates how to decouple navigation code into separate modules using Koin fo
 #### Passing navigation arguments
 
 -
-
 *[Basic ViewModel](references/android/guide/navigation/navigation-3/recipes/passingarguments.md)* :
 Navigation arguments are passed to a `ViewModel` constructed using `viewModel()`
 
 ### Returning results
 
 -
-
 *[Returning Results as Events](references/android/guide/navigation/navigation-3/recipes/results-event.md)* :
 Returning results as events to content in another `NavEntry`
-
 -
-
 *[Returning Results as State](references/android/guide/navigation/navigation-3/recipes/results-state.md)* :
 Returning results as state stored in a `CompositionLocal`

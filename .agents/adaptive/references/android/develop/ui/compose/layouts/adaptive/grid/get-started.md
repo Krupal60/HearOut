@@ -10,7 +10,7 @@ layouts.
    `lib.versions.toml`.
 
        [versions]
-       compose = "1.12.0-alpha02"
+       compose = "1.12.0-beta02"
 
        [libraries]
        androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "compose" }
@@ -25,6 +25,7 @@ layouts.
 
 The following example creates a basic 2x3 grid,
 with the columns and rows having a fixed size of `100.dp`.
+
 
 ```kotlin
 Grid(

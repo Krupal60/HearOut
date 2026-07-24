@@ -1,7 +1,6 @@
 > [!NOTE]
 > **Note:** `Grid` is an experimental API and is subject to change. File any issues on
->
-the [issue tracker](https://issuetracker.google.com/issues/new?component=1876021&template=1424126).
+> the [issue tracker](https://issuetracker.google.com/issues/new?component=1876021&template=1424126).
 
 [
 `Grid`](https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/Grid.composable#Grid(kotlin.Function1,androidx.compose.ui.Modifier,kotlin.Function1))
@@ -29,11 +28,11 @@ such as deep hierarchies and difficulties in adaptability.
 The following table provides an overview
 of which layouts are suitable for each API:
 
-| Component                                                     | Purpose                                                                   |
-|---------------------------------------------------------------|---------------------------------------------------------------------------|
-| `LazyVerticalGrid`, `LazyStaggeredGrid`, `LazyHorizontalGrid` | Visualization of large, homogeneous data sets that requires lazy loading. |
-| `Row`, `Column`, `FlexBox`                                    | One-dimensional layout                                                    |
-| `Grid`                                                        | Two-dimensional layout                                                    |
+| Component                                                     | Purpose                                                                  |
+|---------------------------------------------------------------|--------------------------------------------------------------------------|
+| `LazyVerticalGrid`, `LazyStaggeredGrid`, `LazyHorizontalGrid` | Visualization of large, homogeneous data sets that require lazy loading. |
+| `Row`, `Column`, `FlexBox`                                    | One-dimensional layout                                                   |
+| `Grid`                                                        | Two-dimensional layout                                                   |
 
 > [!NOTE]
 > **Note:** `Grid` doesn't support lazy loading.

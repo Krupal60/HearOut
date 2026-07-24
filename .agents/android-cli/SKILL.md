@@ -1,6 +1,6 @@
 ---
 name: android-cli
-description: Orchestrates Android development tasks including project creation, deployment, SDK management, and environment diagnostics using the `android` command-line tool.
+description: Provides instructions for installing and using the `android` CLI. The `android` command-line tool is a critical tool for Android development and helps you create new Android projects, run Android apps on devices, manage and interact with Android virtual devices (including screenshots and UI inspection), manage Android SDK components, look up official Android documentation, and discover and install official Android skills.
 license: Complete terms in LICENSE.txt
 metadata:
   author: Google LLC
@@ -13,15 +13,22 @@ metadata:
   - project creation
   - screenshots
 ---
-
 # Android CLI Specialist
 
 This skill provides instructions for using the `android` CLI tool. The tool includes various
 commands for creating projects, running applications, interacting with devices, and managing the CLI
 environment.
 
-## SDK management
+## Installation
 
+If the android tool is not in the path, install it. To install run the following command:
+Linux: curl -fsSL https://dl.google.com/android/cli/latest/linux_x86_64/install.sh | bash
+Mac Arm: curl -fsSL https://dl.google.com/android/cli/latest/darwin_arm64/install.sh | bash
+Mac Intel: curl -fsSL https://dl.google.com/android/cli/latest/darwin_x86_64/install.sh | bash
+Windows: curl -fsSL https://dl.google.com/android/cli/latest/windows_x86_64/install.cmd -o "
+%TEMP%\i.cmd" && "%TEMP%\i.cmd"
+
+## SDK management
 To manage the installation of Android SDKs and tools, use the `sdk` command. For example:
 
 - `android sdk install <package>[@<version>]...`: Install specific packages. Multiple packages can
@@ -33,17 +40,14 @@ To manage the installation of Android SDKs and tools, use the `sdk` command. For
 - `android sdk list --all`: List installed and available SDK packages.
 
 ## Project creation
-
 Create projects from templates using the `create` command.
 
 For example: `android create empty-activity --name="My App" --output=./my-app`
 
 ## Interacting with devices
-
 For more information on interacting with running devices, see [here](references/interact.md)
 
 ## Running journey tests
-
 For more information on running journeys, see [here](references/journeys.md)
 
 ## Doc searching
@@ -64,7 +68,6 @@ cases are:
 - Finding best practices for Android concepts.
 
 ## Running APKs
-
 Use the `run` command to run Android apps.
 
 ## Managing emulators
@@ -109,6 +112,7 @@ run Deploy an Android Application
 screen Commands to view the device
 sdk Download and list SDK packages
 skills Manage skills
+studio Android Studio commands
 update Update the Android CLI
 
 create
@@ -220,6 +224,21 @@ add Install a skill
 remove Remove a skill
 list List available skills
 find Find skills by keyword
+
+studio
+Usage: android studio [-h] [COMMAND]
+Android Studio commands
+-h, --help Show this help message and exit.
+Commands:
+find-declaration Find declaration of a symbol
+find-usages Find usages of a symbol
+open-file Open a file in Android Studio
+check Check the status of running Studio instances
+analyze-file Analyze a file in Android Studio
+render-compose-preview Render a Compose preview in Android Studio
+version-lookup Looks up the latest available versions on the
+internet of maven artifacts, Android versions, and
+more.
 
 update
 Usage: android update [--url=PARAM]

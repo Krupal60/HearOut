@@ -28,7 +28,7 @@ subsystems and components: **Styles**.
 | Layer                | Responsibility                                   | Example                                                                                                                                                       |
 |----------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Subsystem values** | Named values                                     | `val Primary = Color(0xFF34A85E)`                                                                                                                             |
-| **Atomic Styles**    | Style that does exactly one property change      | `val buttonStyle = paddingAtomic then roundedCornerShapeAtomic then primaryBackgroundAtomic then largeSize then interactiveShadowAtomic`                      |
+| **Atomic Styles**    | Style that does exactly one property change      | `val largeSizeAtomic = Style { size(100.dp, 40.dp) }`                                                                                                         |
 | **Component Styles** | Component-specific configurations                | A Button with Primary background and 16dp padding. `val buttonStyle = Style { contentPadding(16.dp) shape(RoundedCornerShape(8.dp)) background(Color.Blue) }` |
 | **Components**       | The functional UI element that consumes a Style. | `Button(style = buttonStyle) { ... }`                                                                                                                         |
 
@@ -41,6 +41,7 @@ With the Styles API, you can break down a Style into separate atomic styles.
 Instead of defining complex, component-specific styles like `baseButtonStyle`,
 you can also create small, single-purpose utility styles. These act as your
 "atoms".
+
 
 ```kotlin
 // Define single-purpose "atomic" styles
@@ -85,6 +86,7 @@ atomic utility classes.
 
 **Traditional (non-atomic)**:
 
+
 ```kotlin
 // One large monolithic style
 val buttonStyle = Style {
@@ -97,6 +99,7 @@ val buttonStyle = Style {
 <br />
 
 **Atomic refactor**:
+
 
 ```kotlin
 // Combine atoms to create the final appearance

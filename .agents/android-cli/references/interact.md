@@ -1,16 +1,13 @@
 # Tools
-
 Run `android layout --help` and `android screen --help`.
 
 ## UI Dump
-
 `android layout`  returns a flat JSON list of the UI elements on screen.
 `android layout --diff` returns a flat JSON list of the UI elements that have changed since the last
 call to `layout` or `layout --diff`
 
 Each JSON object represents a UI element in the Android app. The following properties may be
 present:
-
 - `text` - any literal text the element contains
 - `resourceId` - the Android resource id used to refer to the element
 - `contentDesc` - a description of a UI element for use by accessibility tools
@@ -34,12 +31,10 @@ readout element.
 This failure will likely resolve after navigating away from the current screen.
 
 ## Screenshot
-
 `android screen capture -o <file path>` saves a PNG of the current device screen to `<file path>`
 
 Use `screen capture` as a secondary means of examining an Android app
 Examples:
-
 - Understanding the content of an on-screen image
 - Looking at a `WebView` (web content does not always appear in the ui dump)
 - Trying to find a UI element by its visual appearance
@@ -48,7 +43,6 @@ Examples:
 anything else.
 
 ## Annotated Screenshot
-
 `android screen capture --annotate -o <file path>`
 `android screen resolve --screen <path> --string <string>`
 
@@ -71,13 +65,11 @@ To save turns, you can combine shell commands:
 This command taps on region #34 from `screen.png`
 
 ## Input
-
 Use `adb shell input` for interacting with Android devices.
 Refer to the `"interactions"` property of an element for what interactions can be performed on a
 particular element.
 
 Interact with UI elements with their `center` coordinate or their `bounds` coordinates:
-
 ```json
 {
   "key": -248568265,
@@ -86,7 +78,6 @@ Interact with UI elements with their `center` coordinate or their `bounds` coord
   "center": "[152,23]"
 }
 ```
-
 To tap on this button, you would execute `adb shell input tap 152 23`. This taps the center.
 
 ```json
@@ -102,7 +93,6 @@ To scroll down on this list, you would execute `adb shell input swipe 250 400 60
 from the center to the bottom over 500ms.
 
 # Android Interaction Rules
-
 1. Always ensure text input fields have `"focused"` in their `"state"` list before entering text
 2. If an element has `"scrollable"` in its `"interactions"` list, try scrolling it when looking for
    missing UI elements

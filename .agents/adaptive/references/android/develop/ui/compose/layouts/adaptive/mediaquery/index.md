@@ -23,6 +23,7 @@ and lets you focus on defining the condition to trigger the layout updates.
 The following example switches the layout to `TabletopLayout`
 when the foldable posture is tabletop:
 
+
 ```kotlin
 @Composable
 fun VideoPlayer(
@@ -94,6 +95,7 @@ with the updated `UiMediaScope` object and returns a boolean value.
 For example, the following snippet chooses between `TabletopLayout`
 and `FlatLayout` based on the `windowPosture` parameter value.
 
+
 ```kotlin
 @Composable
 fun VideoPlayer(
@@ -133,6 +135,7 @@ Because `windowWidth` and `windowHeight` can update frequently,
 call the `derivedMediaQuery` function instead of the `mediaQuery` function
 when you refer to those parameters in the `query` lambda.
 
+
 ```kotlin
 val narrowerThanMedium by derivedMediaQuery {
     windowWidth < WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp
@@ -160,6 +163,7 @@ current [posture](https://developer.android.com/develop/ui/compose/layouts/adapt
 by comparing the parameter
 with the values defined in the `UiMediaScope.Posture` class.
 The following example switches layout according to the window posture:
+
 
 ```kotlin
 when {

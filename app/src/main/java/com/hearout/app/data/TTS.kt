@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.speech.tts.Voice
 import android.util.Log
 import android.widget.Toast
@@ -28,6 +29,10 @@ class TTS : TextToSpeech.OnInitListener, KoinComponent {
 
     init {
         _tts = TextToSpeech(context, this)
+    }
+
+    fun setProgressListener(listener: UtteranceProgressListener) {
+        _tts?.setOnUtteranceProgressListener(listener)
     }
 
     private fun createLocale(languageCode: String, countryCode: String): Locale {

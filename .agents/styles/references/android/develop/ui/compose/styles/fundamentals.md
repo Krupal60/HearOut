@@ -16,29 +16,31 @@ everything that is a modifier can be replicated with a Style. You still need
 modifiers for certain behaviors, like interactions, custom drawing, or stacking
 of properties.
 
-| Grouping                        | Properties                                                                                                                     | Inherited by children                                                                           |
-|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| **Layout and sizing**           |                                                                                                                                |                                                                                                 |
-| Padding                         | `contentPadding` (inner) and `externalPadding` (outer). Available in directional, horizontal, vertical, and all-side variants. | No                                                                                              |
-| Dimensions                      | `fillWidth/Height/Size()` and `width`, `height`, and `size` (supports `Dp`, `DpSize`, or `Float` fractions).                   | No                                                                                              |
-| Positioning                     | `left/top/right/bottom` offsets.                                                                                               | No                                                                                              |
-| **Visual Appearance**           |                                                                                                                                |                                                                                                 |
-| Fills                           | `background` and `foreground` (supports `Color` or `Brush`).                                                                   | No                                                                                              |
-| Borders                         | `borderWidth`, `borderColor`, and `borderBrush`.                                                                               | No                                                                                              |
-| Shape                           | `shape`                                                                                                                        | No - but used in conjunction with other properties. `clip` and `border` use this defined shape. |
-| Shadows                         | `dropShadow`, `innerShadow`                                                                                                    | No                                                                                              |
-| **Transformations**             |                                                                                                                                |                                                                                                 |
-| Graphics layer spatial movement | `translationX`, `translationY`, `scaleX/Y`, `rotationX/Y/Z`                                                                    | No                                                                                              |
-| Control                         | `alpha`, `zIndex` (stacking order), and `transformOrigin` (pivot point)                                                        | No                                                                                              |
-| **Typography**                  |                                                                                                                                |                                                                                                 |
-| Styling                         | `textStyle`, `fontSize`, `fontWeight`, `fontStyle`, and `fontFamily`                                                           | Yes                                                                                             |
-| Coloration                      | `contentColor` and `contentBrush`. This is also used for Icons styling.                                                        | Yes                                                                                             |
-| Paragraph                       | `lineHeight`, `letterSpacing`, `textAlign`, `textDirection`, `lineBreak`, and `hyphens`.                                       | Yes                                                                                             |
-| Decoration                      | `textDecoration`, `textIndent`, and `baselineShift`.                                                                           | Yes                                                                                             |
+| Grouping                        | Properties                                                                                                                                                                                                                                                                                                                                                               | Inherited by children                                                                           |
+|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| **Layout and sizing**           |                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                 |
+| Content Padding (inner)         | - `contentPadding(all: Dp)` - `contentPadding(horizontal: Dp, vertical: Dp)` - `contentPadding(start: Dp, top: Dp, end: Dp, bottom: Dp)` - `contentPaddingHorizontal(value: Dp)` / `contentPaddingVertical(value: Dp)` - `contentPaddingStart(value: Dp)` / `contentPaddingTop(value: Dp)` / `contentPaddingEnd(value: Dp)` / `contentPaddingBottom(value: Dp)`          | No                                                                                              |
+| External Padding (outer)        | - `externalPadding(all: Dp)` - `externalPadding(horizontal: Dp, vertical: Dp)` - `externalPadding(start: Dp, top: Dp, end: Dp, bottom: Dp)` - `externalPaddingHorizontal(value: Dp)` / `externalPaddingVertical(value: Dp)` - `externalPaddingStart(value: Dp)` / `externalPaddingTop(value: Dp)` / `externalPaddingEnd(value: Dp)` / `externalPaddingBottom(value: Dp)` | No                                                                                              |
+| Dimensions                      | `fillWidth()/fillHeight()/fillSize()` and `width`, `height`, and `size` (supports `Dp`, `DpSize`, or `Float` fractions).                                                                                                                                                                                                                                                 | No                                                                                              |
+| Positioning                     | `left/top/right/bottom` offsets.                                                                                                                                                                                                                                                                                                                                         | No                                                                                              |
+| **Visual Appearance**           |                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                 |
+| Fills                           | `background` and `foreground` (supports `Color` or `Brush`).                                                                                                                                                                                                                                                                                                             | No                                                                                              |
+| Borders                         | `borderWidth`, `borderColor`, and `borderBrush`.                                                                                                                                                                                                                                                                                                                         | No                                                                                              |
+| Shape                           | `shape`                                                                                                                                                                                                                                                                                                                                                                  | No - but used in conjunction with other properties. `clip` and `border` use this defined shape. |
+| Shadows                         | `dropShadow`, `innerShadow`                                                                                                                                                                                                                                                                                                                                              | No                                                                                              |
+| **Transformations**             |                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                 |
+| Graphics layer spatial movement | `translationX`, `translationY`, `scaleX/scaleY`, `rotationX/rotationY/rotationZ`                                                                                                                                                                                                                                                                                         | No                                                                                              |
+| Control                         | `alpha`, `zIndex` (stacking order), and `transformOrigin` (pivot point)                                                                                                                                                                                                                                                                                                  | No                                                                                              |
+| **Typography**                  |                                                                                                                                                                                                                                                                                                                                                                          |                                                                                                 |
+| Styling                         | `textStyle`, `fontSize`, `fontWeight`, `fontStyle`, and `fontFamily`                                                                                                                                                                                                                                                                                                     | Yes                                                                                             |
+| Coloration                      | `contentColor` and `contentBrush`. This is also used for Icons styling.                                                                                                                                                                                                                                                                                                  | Yes                                                                                             |
+| Paragraph                       | `lineHeight`, `letterSpacing`, `textAlign`, `textDirection`, `lineBreak`, and `hyphens`.                                                                                                                                                                                                                                                                                 | Yes                                                                                             |
+| Decoration                      | `textDecoration`, `textIndent`, and `baselineShift`.                                                                                                                                                                                                                                                                                                                     | Yes                                                                                             |
 
 ## Use Styles directly on components with Style parameters
 
 Components that expose a `Style` parameter allow you to set their styling:
+
 
 ```kotlin
 BaseButton(
@@ -53,6 +55,7 @@ BaseButton(
 
 Within the style lambda, you can set various properties, such as `externalPadding`
 or `background`:
+
 
 ```kotlin
 BaseButton(
@@ -74,6 +77,7 @@ For components that lack a built-in style parameter, you can still apply styles
 with the `styleable` modifier. This approach is also useful when developing your
 own custom components.
 
+
 ```kotlin
 Row(
     modifier = Modifier.styleable { }
@@ -84,8 +88,8 @@ Row(
 
 <br />
 
-Similar to the `style` parameter, you can include properties like `background`
-or `padding` inside the lambda.
+Similar to the `style` parameter, you can include properties like `background`,
+`contentPadding`, or `externalPadding` inside the lambda.
 
 ```kotlin
 Row(
@@ -118,6 +122,7 @@ Styles](https://developer.android.com/develop/ui/compose/styles/state-animations
 
 You can define a standalone Style for reusability purposes:
 
+
 ```kotlin
 val style = Style { background(Color.Blue) }
 ```
@@ -132,6 +137,7 @@ documentation.
 
 The following example shows how you can apply a Style either directly through a
 component's built-in parameters, or through a `Modifier.styleable`:
+
 
 ```kotlin
 val style = Style { background(Color.Blue) }
@@ -153,6 +159,7 @@ Column(
 <br />
 
 You can also pass that Style into multiple components:
+
 
 ```kotlin
 val style = Style { background(Color.Blue) }
@@ -185,6 +192,7 @@ Row(
 You can add multiple Style properties by setting different properties on each
 line:
 
+
 ```kotlin
 BaseButton(
     onClick = { },
@@ -208,6 +216,7 @@ take the last set value in the list of properties within one style block. In the
 following example, with the background set twice, the `TealColor` is the applied
 background. For padding, `contentPaddingTop` overrides the top
 padding set by `contentPadding` and does not combine the values.
+
 
 ```kotlin
 BaseButton(
@@ -238,6 +247,7 @@ overrides](https://developer.android.com/static/develop/ui/compose/styles/images
 
 You can create multiple Style objects and pass them into the style parameter of
 your composable.
+
 
 ```kotlin
 val style1 = Style { background(TealColor) }
@@ -295,6 +305,10 @@ Styles](https://developer.android.com/static/develop/ui/compose/styles/images/bu
 **Figure 3.** Button with `contentPadding` that's overridden by different Styles.
 
 ## Style inheritance
+
+> [!NOTE]
+> **Note:** While the Style APIs are experimental, you need to opt-in to enable Style inheritance by
+> setting the flag `ComposeFoundationFlags.isInheritedTextStyleEnabled = true`.
 
 Certain style properties, such as `contentColor` and text style-related
 properties, propagate to the child composables. A style set on a child

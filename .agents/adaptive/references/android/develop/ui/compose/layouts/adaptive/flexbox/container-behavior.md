@@ -1,6 +1,7 @@
 To configure the behavior of the `FlexBox` container, create a `FlexBoxConfig`
 block and supply it using the `config` parameter.
 
+
 ```kotlin
 FlexBox(
     config = {
@@ -110,7 +111,7 @@ There is space, so Child 1 is placed into the line.
 There is `80dp` available space in the line. The gap is `8dp`. Child 2 is
 `40dp`. The required space is `48dp`. There is space, so the gap and Child 2
 are placed into the line.
-![First item placed in the FlexBox container.](https://developer.android.com/static/develop/ui/compose/images/layouts/adaptive/flexbox/algorithm-2.png)
+![Second item placed in the FlexBox container after the first item.](https://developer.android.com/static/develop/ui/compose/images/layouts/adaptive/flexbox/algorithm-2.png)
 **Figure 2.** Second item placed in the `FlexBox` container after the first item.
 
 There is `32dp` available space in the line. The gap is `8dp`. Child 3 is

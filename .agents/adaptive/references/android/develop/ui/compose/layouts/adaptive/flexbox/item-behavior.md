@@ -5,6 +5,7 @@ inside a `FlexBox`.
 
 Use the `basis`, `grow`, and `shrink` functions to control an item's size.
 
+
 ```kotlin
 FlexBox {
     RedRoundedBox(
@@ -87,6 +88,7 @@ default, items have a `shrink` value of `1f`, meaning they shrink equally.
 The following example shows two `Text` composables with the same text. The first
 child has a shrink value of `1f`, meaning it shrinks to absorb all the space
 deficit.
+
 
 ```kotlin
 FlexBox {

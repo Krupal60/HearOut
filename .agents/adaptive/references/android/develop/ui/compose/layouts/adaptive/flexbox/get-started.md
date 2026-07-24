@@ -8,7 +8,7 @@ This page describes how to implement basic `FlexBox` layouts.
    `lib.versions.toml`.
 
        [versions]
-       compose = "1.12.0-alpha02"
+       compose = "1.12.0-beta02"
 
        [libraries]
        androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "compose" }
@@ -23,6 +23,7 @@ This page describes how to implement basic `FlexBox` layouts.
 
 **Example 1** : `FlexBox` lays out two `Text` elements that are centrally
 aligned.
+
 
 ```kotlin
 FlexBox(

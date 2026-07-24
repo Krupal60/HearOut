@@ -54,7 +54,6 @@ more about Android APIs, surfaces, libraries, or devices.
 
 Always use this tool to get the most up-to-date information about Android concepts. Typical good use
 cases are:
-
 - Finding migration guides for APIs.
 - Finding examples for APIs.
 - Finding up-to-date information about Android APIs.

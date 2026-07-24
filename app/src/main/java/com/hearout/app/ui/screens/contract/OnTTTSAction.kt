@@ -69,4 +69,10 @@ sealed class OnTTTSAction {
     data object CloseDialog : OnTTTSAction()
     data object CloseDialog2 : OnTTTSAction()
     data class ShowToast(val message: String) : OnTTTSAction()
+    data class PlayFile(val file: java.io.File) : OnTTTSAction()
+    data object StopPlayback : OnTTTSAction()
+    data object PausePlayback : OnTTTSAction()
+    data object ResumePlayback : OnTTTSAction()
+    data class SeekTo(val position: Long) : OnTTTSAction()
+    data object RefreshLastSaved : OnTTTSAction()
 }

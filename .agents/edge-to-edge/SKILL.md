@@ -146,6 +146,7 @@ metadata:
 RIGHT because `contentWindowInsets` contains IME insets, which are passed to the
 content lambda as `innerPadding`.
 
+
 ```kotlin
 // RIGHT
 Scaffold(contentWindowInsets = WindowInsets.safeDrawing) { innerPadding ->
@@ -164,6 +165,7 @@ Scaffold(contentWindowInsets = WindowInsets.safeDrawing) { innerPadding ->
 
 RIGHT because `fitInside` fits the content to the IME insets regardless of
 `contentWindowInsets`.
+
 
 ```kotlin
 // RIGHT
@@ -414,7 +416,6 @@ private fun StatusBarProtection(
 
 If both the following conditions are true, then the Dialog is full screen and
 must be made edge-to-edge:
-
 1. The `DialogProperties` contains `usePlatformDefaultWidth = false`.
 2. The Dialog calls `Modifier.fillMaxSize()`.
 

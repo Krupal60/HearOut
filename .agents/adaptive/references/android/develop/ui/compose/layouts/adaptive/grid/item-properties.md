@@ -30,6 +30,7 @@ Card **#3** is assigned to the last row (indexed by -1),
 where it automatically occupies
 the first available column in that track (Figure 1).
 
+
 ```kotlin
 Grid(
     config = {
@@ -70,6 +71,7 @@ In the following example,
 Card **#1** is placed in the area consisting of two rows and two columns
 (Figure 2).
 
+
 ```kotlin
 Grid(
     config = {
@@ -103,6 +105,7 @@ by specifying it in the `alignment` parameter of the [
 modifier.
 In the following example, **#1** is placed in the center of the grid area
 consisting of two columns and two rows.
+
 
 ```kotlin
 Grid(
@@ -145,7 +148,7 @@ A UI element in `Grid`
 that has no position specification undergoes auto-placement.
 This example shows how you can mix auto-placed elements
 and the UI elements with specified grid cells.
-Card **#2** and card **#4** are specified grid cells,
+Card **#2** and Card **#4** are placed in specified grid cells,
 and the other items are auto-placed.
 
 ```kotlin
@@ -172,5 +175,5 @@ Grid(
 
 <br />
 
-![Card #3 is placed next to card <b>#1</b>, as it is an auto-placement.](https://developer.android.com/static/develop/ui/compose/images/layouts/adaptive/grid/autoplacement-mixed-with-placement.png)
-**Figure 4** . Card **#3** is placed next to card **#1**, as it is an auto-placement.
+![Card #3 is placed next to Card <b>#1</b>, as it is an auto-placement.](https://developer.android.com/static/develop/ui/compose/images/layouts/adaptive/grid/autoplacement-mixed-with-placement.png)
+**Figure 4** . Card **#3** is placed next to Card **#1**, as it is an auto-placement.

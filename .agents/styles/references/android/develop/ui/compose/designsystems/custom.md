@@ -30,6 +30,7 @@ to make it straightforward and type-safe to follow the Material guidelines.
 However, it's possible to extend the color, typography, and shape sets with
 additional values. The simplest approach is to add extension properties:
 
+
 ```kotlin
 // Use with MaterialTheme.colorScheme.snackbarAction
 val ColorScheme.snackbarAction: Color
@@ -65,6 +66,7 @@ its values.
 Suppose you want to add two additional colors --- `caution` and `onCaution`, a
 yellow color used for actions that are semi-dangerous --- whilst keeping the
 existing Material colors:
+
 
 ```kotlin
 @Immutable
@@ -118,6 +120,7 @@ and Material components still have reasonable defaults.
 If you want to use extended values in components, wrap them in your own
 composable functions, directly setting the values you want to alter, and
 exposing others as parameters to the containing composable:
+
 
 ```kotlin
 @Composable

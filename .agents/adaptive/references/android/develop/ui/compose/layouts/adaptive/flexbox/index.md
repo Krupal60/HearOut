@@ -1,8 +1,7 @@
 > [!NOTE]
 > **Note:** FlexBox is an experimental API and is likely to change in the future. To use it,
 > annotate your code with `@ExperimentalFlexBoxApi`. Please file any issues or feedback on
->
-the [issue tracker](https://issuetracker.google.com/issues/new?component=1876021&title=%5BFlexBox%5D).
+> the [issue tracker](https://issuetracker.google.com/issues/new?component=1876021&title=%5BFlexBox%5D).
 
 [
 `FlexBox`](https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/FlexBox.composable#FlexBox(androidx.compose.ui.Modifier,androidx.compose.foundation.layout.FlexBoxConfig,kotlin.Function1))
@@ -31,8 +30,7 @@ need to wrap items, use `FlexBox` instead of `FlowRow` and `FlowColumn`.
 > [!IMPORTANT]
 > **Key Point:** `FlexBox` is heavily influenced by
 > the [CSS Flexible Box Layout specification](https://www.w3.org/TR/css-flexbox-1/) and has almost
-> identical concepts, terminology, and behavior. If you're familiar with `display: flex`, you'll
-> find
+> identical concepts, terminology, and behavior. If you're familiar with `display: flex`, you'll find
 `FlexBox`'s properties and behavior almost identical.
 
 `FlexBox` lays out its items in either horizontal or vertical *lines* . This

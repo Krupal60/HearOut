@@ -10,6 +10,7 @@ Symbol Processing) plugin.
 
 1. **Version Check**: Use the latest library versions from maven.google.com.
 
+
 ```kotlin
 implementation(libs.androidx.appfunctions)
 implementation(libs.androidx.appfunctions.service)
@@ -17,6 +18,7 @@ ksp(libs.androidx.appfunctions.compiler)
 ```
 
 <br />
+
 
 ```kotlin
 ksp {

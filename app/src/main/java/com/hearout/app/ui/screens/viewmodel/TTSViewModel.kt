@@ -1,11 +1,13 @@
 package com.hearout.app.ui.screens.viewmodel
 
 import android.app.Application
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,19 +16,17 @@ import com.google.mlkit.nl.translate.TranslatorOptions
 import com.hearout.app.R
 import com.hearout.app.data.TTS
 import com.hearout.app.domain.TtsType
-import com.hearout.app.ui.screens.MainScreenState
+import com.hearout.app.ui.screens.TtsScreenState
 import com.hearout.app.ui.screens.contract.MainScreenEffect
 import com.hearout.app.ui.screens.contract.OnTTTSAction
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
@@ -37,14 +37,33 @@ class TTSViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val _mainState = MutableStateFlow(MainScreenState())
-    val mainState: StateFlow<MainScreenState> get() = _mainState.asStateFlow()
+    val mainState: StateFlow<TtsScreenState>
+        field = MutableStateFlow(TtsScreenState())
 
-    private val _effects = Channel<MainScreenEffect>(Channel.BUFFERED)
-    val effects: Flow<MainScreenEffect> = _effects.receiveAsFlow()
+    val effects: SharedFlow<MainScreenEffect>
+        field = MutableSharedFlow<MainScreenEffect>()
+
+    private var mediaPlayer: MediaPlayer? = null
+    private var progressJob: Job? = null
 
     init {
         tts.setLanguage("en", "IN")
+        tts.setProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+                mainState.value = mainState.value.copy(isSaving = true)
+            }
+
+            override fun onDone(utteranceId: String?) {
+                mainState.value = mainState.value.copy(isSaving = false)
+                refreshLastSaved()
+            }
+
+            @Deprecated("Deprecated in Java")
+            override fun onError(utteranceId: String?) {
+                mainState.value = mainState.value.copy(isSaving = false)
+            }
+        })
+        refreshLastSaved()
     }
 
     fun onActionTTS(onTTTSAction: OnTTTSAction) {
@@ -127,23 +146,139 @@ class TTSViewModel(
             OnTTTSAction.CloseDialog2 -> closeDialog2()
             OnTTTSAction.OpenDialog2 -> openDialog2()
             is OnTTTSAction.ChangeName2 -> changeName2(onTTTSAction.name)
-            is OnTTTSAction.ShowToast -> showToast(onTTTSAction.message)
+            is OnTTTSAction.ShowToast -> showToastUI(onTTTSAction.message)
+            is OnTTTSAction.PlayFile -> playFile(onTTTSAction.file)
+            OnTTTSAction.StopPlayback -> stopPlayback()
+            OnTTTSAction.PausePlayback -> pausePlayback()
+            OnTTTSAction.ResumePlayback -> resumePlayback()
+            is OnTTTSAction.SeekTo -> seekTo(onTTTSAction.position)
+            OnTTTSAction.RefreshLastSaved -> refreshLastSaved()
         }
     }
 
-    private fun showToast(message: String) {
-        _effects.trySend(MainScreenEffect.ShowToast(message))
+    private fun refreshLastSaved() {
+        viewModelScope.launch {
+            val folderName = getApplication<Application>().getString(R.string.app_name)
+            val rootFolder = File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC),
+                folderName
+            )
+            if (rootFolder.exists()) {
+                val mostRecentFile = rootFolder.walkTopDown()
+                    .filter { it.isFile && it.extension == "mp3" }
+                    .maxByOrNull { it.lastModified() }
+
+                if (mostRecentFile != null && mostRecentFile.exists()) {
+                    mainState.value = mainState.value.copy(mp3File = mostRecentFile)
+                } else {
+                    mainState.value = mainState.value.copy(mp3File = null)
+                }
+            } else {
+                mainState.value = mainState.value.copy(mp3File = null)
+            }
+        }
+    }
+
+    private fun playFile(file: File) {
+        viewModelScope.launch {
+            stopPlayback()
+            try {
+                mediaPlayer = MediaPlayer().apply {
+                    setDataSource(file.absolutePath)
+                    prepare()
+                    start()
+                    mainState.value = mainState.value.copy(
+                        isMP3Playing = true,
+                        isPaused = false,
+                        playbackDuration = duration.toLong()
+                    )
+                    startProgressTracker()
+                    setOnCompletionListener {
+                        stopPlayback()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("TTSViewModel", "Error playing file", e)
+                showToast("Error playing file")
+            }
+        }
+    }
+
+    private fun pausePlayback() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.pause()
+                mainState.value = mainState.value.copy(isPaused = true)
+                stopProgressTracker()
+            }
+        }
+    }
+
+    private fun resumePlayback() {
+        mediaPlayer?.let {
+            if (!it.isPlaying) {
+                it.start()
+                mainState.value = mainState.value.copy(isPaused = false)
+                startProgressTracker()
+            }
+        }
+    }
+
+    private fun stopPlayback() {
+        stopProgressTracker()
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+        mainState.value = mainState.value.copy(
+            isMP3Playing = false,
+            isPaused = false,
+            playbackPosition = 0L,
+            playbackDuration = 0L
+        )
+    }
+
+    private fun seekTo(position: Long) {
+        mediaPlayer?.seekTo(position.toInt())
+        mainState.value = mainState.value.copy(playbackPosition = position)
+    }
+
+    private fun startProgressTracker() {
+        progressJob?.cancel()
+        progressJob = viewModelScope.launch {
+            while (true) {
+                mediaPlayer?.let {
+                    if (it.isPlaying) {
+                        mainState.value =
+                            mainState.value.copy(playbackPosition = it.currentPosition.toLong())
+                    }
+                }
+                delay(200.milliseconds)
+            }
+        }
+    }
+
+    private fun stopProgressTracker() {
+        progressJob?.cancel()
+        progressJob = null
+    }
+
+    private suspend fun showToast(message: String) {
+        effects.emit(MainScreenEffect.ShowToast(message))
+    }
+
+    private fun showToastUI(message: String) {
+        effects.tryEmit(MainScreenEffect.ShowToast(message))
     }
 
     private fun changeName2(name: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(name2 = name)
+            mainState.value = mainState.value.copy(name2 = name)
         }
     }
 
     private fun convertLanguage(text: String, code1: String, code2: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(convertLoading = true)
+            mainState.value = mainState.value.copy(convertLoading = true)
             val options = TranslatorOptions.Builder()
                 .setSourceLanguage(code1)
                 .setTargetLanguage(code2)
@@ -151,18 +286,18 @@ class TTSViewModel(
             val translator = Translation.getClient(options)
             translator.downloadModelIfNeeded()
                 .addOnFailureListener {
-                    _mainState.value = _mainState.value.copy(convertLoading = false)
+                    mainState.value = mainState.value.copy(convertLoading = false)
                     Log.e("error", it.toString())
                 }
                 .addOnSuccessListener {
                     translator.translate(text)
                         .addOnFailureListener {
-                            _mainState.value = _mainState.value.copy(convertLoading = false)
+                            mainState.value = mainState.value.copy(convertLoading = false)
                             Log.e("error", it.toString())
                         }
                         .addOnSuccessListener {
-                            _mainState.value = _mainState.value.copy(convertLoading = false)
-                            _mainState.value = _mainState.value.copy(text2 = it)
+                            mainState.value = mainState.value.copy(convertLoading = false)
+                            mainState.value = mainState.value.copy(text2 = it)
                             translator.close()
                         }
 
@@ -172,25 +307,25 @@ class TTSViewModel(
 
     private fun closeDialog2() {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(openDialog2 = false, name2 = "")
+            mainState.value = mainState.value.copy(openDialog2 = false, name2 = "")
         }
     }
 
     private fun closeDialog() {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(openDialog = false, name = "")
+            mainState.value = mainState.value.copy(openDialog = false, name = "")
         }
     }
 
     private fun openDialog2() {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(openDialog2 = true)
+            mainState.value = mainState.value.copy(openDialog2 = true)
         }
     }
 
     private fun openDialog() {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(openDialog = true)
+            mainState.value = mainState.value.copy(openDialog = true)
         }
     }
 
@@ -198,36 +333,36 @@ class TTSViewModel(
         viewModelScope.launch {
             tts.setLanguage(languageCode, countryCode)
             if (isSecond) {
-                _mainState.value =
-                    _mainState.value.copy(selectedVoice2 = "Voice 1", voiceName2 = "")
+                mainState.value =
+                    mainState.value.copy(selectedVoice2 = "Voice 1", voiceName2 = "")
             } else {
-                _mainState.value = _mainState.value.copy(selectedVoice = "Voice 1", voiceName = "")
+                mainState.value = mainState.value.copy(selectedVoice = "Voice 1", voiceName = "")
             }
         }
     }
 
     private fun selectedLanguage2(language: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(selectedLanguage2 = language)
+            mainState.value = mainState.value.copy(selectedLanguage2 = language)
         }
     }
 
     private fun selectedCode2(languageCode: String, countryCode: String) {
         viewModelScope.launch {
-            _mainState.value =
-                _mainState.value.copy(languageCode2 = languageCode, countryCode2 = countryCode)
+            mainState.value =
+                mainState.value.copy(languageCode2 = languageCode, countryCode2 = countryCode)
         }
     }
 
     private fun selectedVoice2(name: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(selectedVoice2 = name)
+            mainState.value = mainState.value.copy(selectedVoice2 = name)
         }
     }
 
     private fun voiceName2(name: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(voiceName2 = name)
+            mainState.value = mainState.value.copy(voiceName2 = name)
         }
     }
 
@@ -243,9 +378,9 @@ class TTSViewModel(
                     }
                 }.toImmutableList()
                 if (isSecond) {
-                    _mainState.value = _mainState.value.copy(voiceNameData2 = mappedData)
+                    mainState.value = mainState.value.copy(voiceNameData2 = mappedData)
                 } else {
-                    _mainState.value = _mainState.value.copy(voiceNameData = mappedData)
+                    mainState.value = mainState.value.copy(voiceNameData = mappedData)
                 }
             }
         }
@@ -253,7 +388,7 @@ class TTSViewModel(
 
     private fun changeText2(text: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(text2 = text)
+            mainState.value = mainState.value.copy(text2 = text)
         }
     }
 
@@ -271,19 +406,19 @@ class TTSViewModel(
 
     private fun changeName(name: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(name = name)
+            mainState.value = mainState.value.copy(name = name)
         }
     }
 
     private fun changeText(text: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(text = text)
+            mainState.value = mainState.value.copy(text = text)
         }
     }
 
     override fun onCleared() {
         tts.shutDown()
-        super.onCleared()
+        mediaPlayer?.release()
     }
 
     private fun stop() {
@@ -294,13 +429,13 @@ class TTSViewModel(
 
     private fun voiceName(name: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(voiceName = name)
+            mainState.value = mainState.value.copy(voiceName = name)
         }
     }
 
     private fun selectedVoice(name: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(selectedVoice = name)
+            mainState.value = mainState.value.copy(selectedVoice = name)
         }
     }
 
@@ -321,7 +456,7 @@ class TTSViewModel(
             val utteranceId = "utteranceId"
 
             try {
-                tts.setVoice(_mainState.value.voiceName)
+                tts.setVoice(mainState.value.voiceName)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     val fileOutputStream = FileOutputStream(file)
@@ -336,7 +471,7 @@ class TTSViewModel(
                 Log.e("TTSViewModel", "Error saving as MP3: ${e.message}", e)
             }
 
-            _mainState.value = _mainState.value.copy(mp3File = file.absoluteFile)
+            mainState.value = mainState.value.copy(mp3File = file.absoluteFile)
         }
     }
 
@@ -356,13 +491,13 @@ class TTSViewModel(
                     delay(80L.milliseconds)
                     val ttsSpeaking = tts.isSpeaking()
 
-                    _mainState.value = when (ttsType) {
-                        TtsType.TTS1 -> _mainState.value.copy(
+                    mainState.value = when (ttsType) {
+                        TtsType.TTS1 -> mainState.value.copy(
                             isSpeaking = ttsSpeaking,
                             isSpeaking2 = false
                         )
 
-                        TtsType.TTS2 -> _mainState.value.copy(
+                        TtsType.TTS2 -> mainState.value.copy(
                             isSpeaking = false,
                             isSpeaking2 = ttsSpeaking
                         )
@@ -379,13 +514,13 @@ class TTSViewModel(
                     }
                 }
 
-                _mainState.value = _mainState.value.copy(
+                mainState.value = mainState.value.copy(
                     isSpeaking = false,
                     isSpeaking2 = false
                 )
             }
         } else {
-            _mainState.value = _mainState.value.copy(
+            mainState.value = mainState.value.copy(
                 isSpeaking = false,
                 isSpeaking2 = false
             )
@@ -394,14 +529,14 @@ class TTSViewModel(
 
     private fun selectedCode(languageCode: String, countryCode: String) {
         viewModelScope.launch {
-            _mainState.value =
-                _mainState.value.copy(languageCode = languageCode, countryCode = countryCode)
+            mainState.value =
+                mainState.value.copy(languageCode = languageCode, countryCode = countryCode)
         }
     }
 
     private fun selectedLanguage(language: String) {
         viewModelScope.launch {
-            _mainState.value = _mainState.value.copy(selectedLanguage = language)
+            mainState.value = mainState.value.copy(selectedLanguage = language)
         }
     }
 }

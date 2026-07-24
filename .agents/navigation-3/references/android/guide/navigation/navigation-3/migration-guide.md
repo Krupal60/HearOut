@@ -15,6 +15,7 @@ Navigation 3, follow these steps:
 
 <br />
 
+
 ## AI Prompt
 
 ### Migrate from Navigation 2 to Navigation 3
@@ -171,8 +172,7 @@ After:
 > [!NOTE]
 > **Note:** The `@Serializable` annotation is provided by the KotlinX Serialization plugin. You can
 > add this by
->
-following [these project setup steps](https://developer.android.com/guide/navigation/navigation-3/get-started#project-setup).
+> following [these project setup steps](https://developer.android.com/guide/navigation/navigation-3/get-started#project-setup).
 
 ## Step 3: Create classes to hold and modify your navigation state
 
@@ -480,12 +480,12 @@ For example:
             ScreenA(title = "Screen has ID: $id")
         }
         featureBSection()
-        dialog<RouteD>{ ScreenD() }
+    <    di>alogRouteD{ ScreenD() }
     }
 
     fun NavGraphBuilder.featureBSection() {
-        navigation<BaseRouteB>(startDestination = RouteB) {
-            composable<RouteB> { ScreenB() }
+        <navigation>BaseRouteB(startDestination = RouteB) {
+            <compos>ableRouteB { ScreenB() }
         }
     }
 
@@ -502,12 +502,12 @@ becomes:
 
     val entryProvider = entryProvider {
         entry<RouteA>{ key -> ScreenA(title = "Screen has ID: ${key.id}") }
-        featureBSection()
-        entry<RouteD>(metadata = DialogSceneStrategy.dialog()){ ScreenD() }
+        featureBSection()<
+        e>ntryRouteD(metadata = DialogSceneStrategy.dialog()){ ScreenD() }
     }
 
-    fun EntryProviderScope<NavKey>.featureBSection() {
-        entry<RouteB> { ScreenB() }
+    fun EntryPro<viderS>copeNavKey.featureBSection() {<
+        e>ntryRouteB { ScreenB() }
     }
 
 ## Step 6: Replace `NavHost` with `NavDisplay`
